@@ -21,7 +21,7 @@ Este catálogo consolida os domínios analíticos e calculadoras determinística
 | `b2b_deal_economics` | **Economia de Negocios B2B (VPL, TIR, Payback & Margem)**<br/>*Calculos deterministicos de ROI, Payback, VPL (NPV), TIR (IRR), margem bruta (gate >= 65%) e custo da inacao.* | **Fase 04** | `DECIMAL(18,4)` | `24h` | `CLIENT_SHIELDED_CALC` | `id_contrato_masked`<br/>`cod_centro_custo` | `HOMOLOGATED` |
 | `career_tax_parity` | **Paridade Tributaria & Remuneracao (CLT x PJ x USD/EUR)**<br/>*Comparador liquido CLT vs. PJ (Simples Nacional Anexos III/V + Fator R + ISS Manaus) vs. Contractor USD/EUR com PTAX/Selic/IPCA.* | **Fase 04** | `DECIMAL(18,4)` | `24h` | `CAREER_SHIELDED_CALC` | `id_municipio`<br/>`sigla_uf` | `HOMOLOGATED` |
 | `public_macro_bridge` | **Ponte Macroeconomica Publica (PTAX, Selic, IPCA)**<br/>*Leitor read-only das series publicas PTAX, Selic e IPCA em ../public-data-gateway com snapshot offline de referencia (seed=42) para CI.* | **Fase 04** | `DECIMAL(12,6)` | `24h` | `PUBLIC_NON_PERSONAL` | `id_municipio`<br/>`sigla_uf` | `HOMOLOGATED` |
-| `ai_cloud_finops` | **AI & Cloud FinOps Telemetry (POP_T_158)**<br/>*Ingestao de telemetria de LLMs (tiers T1-T4), apuracao de custo por tarefa e simulador de economia por Prompt Cache, Batch API e janela Off-Peak.* | **Fase 05** | `DECIMAL(18,4)` | `1h` | `INTERNAL_TELEMETRY_REDACTED` | `id_lancamento`<br/>`cod_centro_custo` | `CATALOGED` |
+| `ai_cloud_finops` | **AI & Cloud FinOps Telemetry (POP_T_158)**<br/>*Ingestao de telemetria de LLMs (tiers T1-T4), apuracao de custo por tarefa e simulador de economia por Prompt Cache, Batch API e janela Off-Peak.* | **Fase 05** | `DECIMAL(18,4)` | `1h` | `INTERNAL_TELEMETRY_REDACTED` | `id_lancamento`<br/>`cod_centro_custo` | `HOMOLOGATED` |
 
 ---
 

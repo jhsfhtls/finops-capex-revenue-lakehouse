@@ -73,7 +73,7 @@ domains:
   - domain_id: ai_cloud_finops
     name: "AI & Cloud FinOps Telemetry (POP_T_158)"
     phase: "05"
-    status: CATALOGED
+    status: HOMOLOGATED
     granularity: "Span de execucao multi-agente (.logs/agent_telemetry.jsonl)"
     storage_layers:
       - bronze_sqlite_wal
