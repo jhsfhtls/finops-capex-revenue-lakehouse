@@ -2,10 +2,10 @@
   "schema_version": "1.0.0",
   "last_updated": "2026-11-22",
   "project_name": "finops-capex-revenue-lakehouse",
-  "current_macro_phase_id": "04",
-  "current_macro_phase": "Fase 04 - Calculadoras B2B & Paridade CLT/PJ/USD-EUR",
+  "current_macro_phase_id": "05",
+  "current_macro_phase": "Fase 05 - Conector AI/Cloud FinOps (POP_T_158)",
   "overall_status": "ON_TRACK",
-  "next_phase": "Fase 05 - Conector AI/Cloud FinOps (POP_T_158)",
+  "next_phase": "Fase 06 - dbt-duckdb Gold Star Schema (100% Documentado)",
   "structural_phases": [
     {
       "phase_id": "00",
@@ -67,11 +67,12 @@
     {
       "phase_id": "05",
       "name": "Conector AI/Cloud FinOps (POP_T_158)",
-      "status": "PENDING",
-      "completion_date": null,
+      "status": "COMPLETED",
+      "completion_date": "2026-11-22",
       "deliverables": [
-        "Ingestor de agent_telemetry.jsonl (sintetico e schema real C.O.R.E.)",
-        "Catalogo de precos T1-T4 e simulador de economia por cache/batch/off-peak"
+        "Catalogo de precos POP_T_158 v1.4.0 (44 modelos, tiers T1-T4, billing cliffs >100K/>200K/>272K) em Decimal puro",
+        "Gerador sintetico deterministico (seed=42) e leitor JSONL compativel com .logs/agent_telemetry.jsonl + redacao de segredos/CPF",
+        "Simulador de economia (Prompt Cache, Batch API -50%, DeepSeek Off-Peak UTC -50%) e materializacao Silver ZSTD com ODCS v3.1"
       ]
     },
     {
@@ -171,8 +172,14 @@
     {
       "date": "2026-11-22",
       "phase_id": "04",
-      "milestone": "Calculadoras Deterministicas B2B, Paridade CLT/PJ/FX & Monte Carlo 10k",
+      "milestone": "Calculadoras Deterministicas B2B, Paridade CLT/PJ/FX & Monte Carlo 10k (PR #5)",
       "summary": "Implementacao de calculators/b2b_economics.py (NPV, IRR, Payback, gate de margem >= 65%, custo da inacao), calculators/career_parity.py (CLT vs PJ Anexo III/V + Fator R + ISS Manaus vs USD/EUR + Monte Carlo 10k int64 seed=42) e gateway_bridge (PTAX/Selic/IPCA com fallback offline)."
+    },
+    {
+      "date": "2026-11-22",
+      "phase_id": "05",
+      "milestone": "Conector AI/Cloud FinOps, Catalogo POP_T_158 & Simulador de Economia (PR #6)",
+      "summary": "Implementacao de finops_ai/pricing_catalog.py (44 modelos POP_T_158 v1.4.0, tiers T1-T4, billing cliffs em Decimal puro) e finops_ai/telemetry_connector.py (gerador seed=42, ingestor JSONL C.O.R.E. com quarentena e redacao de segredos, waterfall cache/batch/off-peak e Silver Parquet ZSTD sob contrato ODCS v3.1)."
     }
   ]
 }

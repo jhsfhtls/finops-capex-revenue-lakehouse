@@ -1,0 +1,146 @@
+schema_version: "3.1.0"
+contract_id: "ODCS-FINOPS-AI-CLOUD-001"
+domain: "ai_cloud_finops"
+owner: "finops-engineering"
+monetary_precision: "DECIMAL(18,4)"
+rate_precision: "DECIMAL(12,6)"
+allowed_tiers:
+  - T1
+  - T2
+  - T3
+  - T4
+allowed_statuses:
+  - ok
+  - error
+  - blocked
+allowed_agent_roles:
+  - primary
+  - subagent
+invariants:
+  non_negative_tokens: true
+  tokens_total_eq_sum: true
+  cached_le_tokens_in: true
+  non_negative_costs: true
+  cost_optimized_le_baseline: true
+columns:
+  id_lancamento:
+    type: STRING
+    primary_key: true
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Identificador canonico deterministico do span de telemetria FinOps."
+  timestamp_utc:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Carimbo temporal ISO-8601 em UTC da execucao do span."
+  competencia:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Competencia contabil derivada no formato YYYY-MM."
+  trace_id:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Identificador hexadecimal da trace distribuida."
+  span_id:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Identificador hexadecimal unico do span."
+  parent_span_id:
+    type: STRING
+    nullable: true
+    max_null_ratio: 1.0
+    description: "Identificador do span pai na arvore distribuida (opcional)."
+  cod_centro_custo:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Codigo canonico STRING do centro de custo consumidor de IA/Cloud."
+  repo:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Nome do repositorio onde o agente executou o span."
+  agent_role:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Papel do agente executor (primary ou subagent)."
+  skill:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Skill ou fluxo responsavel pela chamada de modelo."
+  operation:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Operacao executada higienizada contra segredos e CWE-1236."
+  model:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Identificador canonico do LLM normalizado conforme POP_T_158."
+  provider:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Provedor do modelo (google, anthropic, openai, deepseek, etc.)."
+  tier:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Tier canonico de roteamento POP_T_158 (T1, T2, T3, T4)."
+  tokens_in:
+    type: INTEGER
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Quantidade total de tokens de entrada consumidos pelo span."
+  tokens_out:
+    type: INTEGER
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Quantidade total de tokens de saida gerados pelo span."
+  tokens_total:
+    type: INTEGER
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Soma deterministica de tokens_in + tokens_out."
+  cached_tokens_in:
+    type: INTEGER
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Subconjunto de tokens_in elegivel/atendido via Prompt Caching."
+  cost_usd:
+    type: DECIMAL(18,4)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Custo baseline do span em USD sob tarifa POP_T_158 em DECIMAL(18,4)."
+  cost_optimized_usd:
+    type: DECIMAL(18,4)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Custo otimizado apos alavancas de Prompt Cache, Batch API e Off-Peak em DECIMAL(18,4)."
+  savings_usd:
+    type: DECIMAL(18,4)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Economia realizada ou potencial (cost_usd - cost_optimized_usd) em DECIMAL(18,4)."
+  duration_ms:
+    type: INTEGER
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Duracao do span de execucao em milissegundos."
+  status:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Situacao de termino do span (ok, error, blocked)."
+  notes:
+    type: STRING
+    nullable: true
+    max_null_ratio: 1.0
+    description: "Observacoes operacionais higienizadas contra segredos e CWE-1236."
