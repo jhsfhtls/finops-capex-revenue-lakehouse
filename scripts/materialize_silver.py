@@ -8,16 +8,8 @@ import os
 import sys
 from pathlib import Path
 
-from finops_lakehouse.core.shield import default_repo_root
+from finops_lakehouse.core.shield import configure_stdio_utf8, default_repo_root
 from finops_lakehouse.core.silver_bootstrap import materialize_silver_layer
-
-
-def _configure_stdio_utf8() -> None:
-    """Force UTF-8 stdout/stderr encoding on Windows terminals."""
-    for stream in (sys.stdout, sys.stderr):
-        reconfigure = getattr(stream, "reconfigure", None)
-        if callable(reconfigure):
-            reconfigure(encoding="utf-8", errors="replace")
 
 
 def _default_data_dir() -> Path:
@@ -27,7 +19,7 @@ def _default_data_dir() -> Path:
 
 def main(argv: list[str] | None = None) -> int:
     """Materialize all synthetic Silver datasets deterministically."""
-    _configure_stdio_utf8()
+    configure_stdio_utf8()
     parser = argparse.ArgumentParser(
         description="Materialize synthetic Silver Parquet ZSTD datasets for dbt-duckdb Gold layer."
     )

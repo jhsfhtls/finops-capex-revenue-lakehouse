@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import sys
 import zipfile
 from decimal import Decimal
 from pathlib import Path
@@ -25,6 +26,14 @@ class SpreadsheetSecurityError(ValueError):
 def default_repo_root() -> Path:
     """Resolve repository root cleanly from module location without CWD dependency."""
     return Path(__file__).resolve().parents[3]
+
+
+def configure_stdio_utf8() -> None:
+    """Force UTF-8 stdout/stderr encoding on Windows terminals."""
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            reconfigure(encoding="utf-8", errors="replace")
 
 
 def enforce_client_path_shield(

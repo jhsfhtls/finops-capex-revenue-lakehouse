@@ -2,4 +2,6 @@
 
 __version__ = "0.1.0"
 
-__all__ = ["__version__"]
+from finops_lakehouse.sdk import FinOpsLakehouse  # noqa: E402
+
+__all__ = ["FinOpsLakehouse", "__version__"]

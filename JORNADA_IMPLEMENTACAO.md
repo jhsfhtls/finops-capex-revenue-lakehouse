@@ -14,17 +14,17 @@ Este artefato constitui a **Fonte Única da Verdade Operacional (SSOT)** do prog
 
 ## 1. Painel de Status Executivo
 
-- **Macrofase Ativa:** `Fase 06 - dbt-duckdb Gold Star Schema (100% Documentado)`
+- **Macrofase Ativa:** `Fase 07 - Paridade nas 4 Interfaces & Vitrine Analitica BI`
 - **Status Geral de Governança:** `ON_TRACK`
-- **Próxima Fase Planejada:** `Fase 07 - Paridade nas 4 Interfaces & Vitrine Analitica BI`
-- **Progresso Estrutural das Fases:** **7 de 9 Concluídas (77.8%)**
+- **Próxima Fase Planejada:** `Fase 08 - Integracao e Acoplamento no Ecossistema C.O.R.E.`
+- **Progresso Estrutural das Fases:** **8 de 9 Concluídas (88.9%)**
 - **Domínios Catalogados:** **6 domínios financeiros e analíticos**
 
 ```mermaid
 flowchart LR
     F01["Fases 00..01: ADRs & Fundacao<br/>CONCLUIDO"] --> F03["Fases 02..03: Razao & Aging<br/>CONCLUIDO"]
     F03 --> F05["Fases 04..05: Calculadoras & AI FinOps<br/>CONCLUIDO"]
-    F05 --> F07["Fases 06..07: dbt Gold & 4 Interfaces<br/>EM ANDAMENTO"]
+    F05 --> F07["Fases 06..07: dbt Gold & 4 Interfaces<br/>CONCLUIDO"]
     F07 --> F08["Fase 08: Acoplamento C.O.R.E.<br/>PENDENTE"]
 ```
 
@@ -41,7 +41,7 @@ flowchart LR
 | **Fase 04** | **Calculadoras B2B & Paridade CLT/PJ/USD-EUR** | `CONCLUIDO` | `2026-11-22` | - Economia B2B deterministica: NPV, IRR, Payback, margem bruta >= 65% e custo da inacao<br/>- Paridade CLT x PJ (Simples III/V + Fator R + ISS Manaus) x USD/EUR + Monte Carlo 10k (int64, seed=42)<br/>- Ponte macroeconomica ../public-data-gateway (PTAX/Selic/IPCA) com snapshot offline para CI |
 | **Fase 05** | **Conector AI/Cloud FinOps (POP_T_158)** | `CONCLUIDO` | `2026-11-22` | - Catalogo de precos POP_T_158 v1.4.0 (44 modelos, tiers T1-T4, billing cliffs >100K/>200K/>272K) em Decimal puro<br/>- Gerador sintetico deterministico (seed=42) e leitor JSONL compativel com .logs/agent_telemetry.jsonl + redacao de segredos/CPF<br/>- Simulador de economia (Prompt Cache, Batch API -50%, DeepSeek Off-Peak UTC -50%) e materializacao Silver ZSTD com ODCS v3.1 |
 | **Fase 06** | **dbt-duckdb Gold Star Schema (100% Documentado)** | `CONCLUIDO` | `2026-11-22` | - Materializador deterministico Silver (silver_bootstrap.py + scripts/materialize_silver.py, 5 datasets ZSTD)<br/>- 5 dimensoes Gold (dim_calendario_fiscal, dim_centro_custo, dim_conta_contabil, dim_cliente_segmento, dim_llm_model)<br/>- 4 fatos Gold (fct_capex_opex_variance, fct_receivables_aging, fct_b2b_deal_economics, fct_ai_finops_consumption) + 14/14 modelos e 307/307 colunas documentadas (lint_dbt_docs.py APPROVED) |
-| **Fase 07** | **Paridade nas 4 Interfaces & Vitrine Analitica BI** | `PENDENTE` | `-` | - Paridade matematica exata entre CLI fcl, SDK FinOpsLakehouse, FastAPI /api/v1/* e MCP fcl-mcp<br/>- App Streamlit + pacote Power BI (modelo Star Schema, medidas DAX e screenshots) |
+| **Fase 07** | **Paridade nas 4 Interfaces & Vitrine Analitica BI** | `CONCLUIDO` | `2026-11-22` | - SDK FinOpsLakehouse (SSOT Decimal) + CLI fcl (budget-variance, aging-priority, b2b-roi, career-parity, ai-finops)<br/>- FastAPI /api/v1/* (HTTP 422 para float/bool e LFI-shielded) + MCP fcl-mcp JSON-RPC 2.0 (<untrusted_data>) com paridade exata nas 4 interfaces<br/>- Bootstrap <= 60s (scripts/bootstrap_lakehouse.py) e vitrine BI (bi/streamlit_app.py + pacote Power BI .pbids/DAX/Star Schema + SVGs em bi/assets/) |
 | **Fase 08** | **Integracao e Acoplamento no Ecossistema C.O.R.E.** | `PENDENTE` | `-` | - POP oficial no core (get_next_pop_number.py + tech-sop-architect + tech-docs-formatter)<br/>- Skill inativa biz-finops-revenue-lakehouse + eval_cases.json + roteamento nos Orchestrators |
 
 ---
@@ -70,6 +70,7 @@ flowchart LR
 | `2026-11-22` | **Fase 04** | **Calculadoras Deterministicas B2B, Paridade CLT/PJ/FX & Monte Carlo 10k (PR #5)** | Implementacao de calculators/b2b_economics.py (NPV, IRR, Payback, gate de margem >= 65%, custo da inacao), calculators/career_parity.py (CLT vs PJ Anexo III/V + Fator R + ISS Manaus vs USD/EUR + Monte Carlo 10k int64 seed=42) e gateway_bridge (PTAX/Selic/IPCA com fallback offline). |
 | `2026-11-22` | **Fase 05** | **Conector AI/Cloud FinOps, Catalogo POP_T_158 & Simulador de Economia (PR #6)** | Implementacao de finops_ai/pricing_catalog.py (44 modelos POP_T_158 v1.4.0, tiers T1-T4, billing cliffs em Decimal puro) e finops_ai/telemetry_connector.py (gerador seed=42, ingestor JSONL C.O.R.E. com quarentena e redacao de segredos, waterfall cache/batch/off-peak e Silver Parquet ZSTD sob contrato ODCS v3.1). |
 | `2026-11-22` | **Fase 06** | **dbt-duckdb Gold Star Schema 100% Documentado (PR #7)** | Criacao de core/silver_bootstrap.py + scripts/materialize_silver.py, contrato ODCS b2b_deal_economics e projeto dbt/ (5 views staging, 5 dimensoes e 4 fatos em SQL ANSI portavel sem DOUBLE/FLOAT, 230 schema tests + 3 testes singulares (233 data tests) e 100% de cobertura documental via lint_dbt_docs.py no CI). |
+| `2026-11-22` | **Fase 07** | **Paridade Exata nas 4 Interfaces & Vitrine Analitica BI (PR #8)** | Criacao do SDK FinOpsLakehouse e exposicao identica em Decimal via CLI fcl, FastAPI /api/v1/* (rejeitando float HTTP 422) e MCP fcl-mcp (<untrusted_data>), alem de bootstrap_lakehouse.py (<= 60s), app Streamlit, pacote Power BI (.pbids, DAX, Star Schema) e previews SVG deterministicos. |
 
 ---
 

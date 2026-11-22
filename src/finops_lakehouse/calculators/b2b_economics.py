@@ -11,6 +11,7 @@ from finops_lakehouse.core.decimal_utils import (
     RATE_QUANT,
     ZERO_MONEY,
     format_money,
+    require_non_negative_int,
     to_decimal_money,
     to_decimal_rate,
 )
@@ -200,8 +201,7 @@ def evaluate_b2b_deal(
     target_gross_margin: Decimal | int | str = Decimal("0.650000"),
 ) -> dict[str, Any]:
     """Evaluate B2B deal economics with deterministic NPV, IRR, Payback, Margin Gate & COI."""
-    if isinstance(delay_months, bool) or not isinstance(delay_months, int) or delay_months < 0:
-        raise ValueError("delay_months must be a non-negative integer.")
+    require_non_negative_int(delay_months, "delay_months")
 
     inv = to_decimal_money(initial_investment)
     if inv <= ZERO_MONEY:
