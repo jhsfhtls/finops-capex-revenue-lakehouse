@@ -14,16 +14,16 @@ Este artefato constitui a **Fonte Única da Verdade Operacional (SSOT)** do prog
 
 ## 1. Painel de Status Executivo
 
-- **Macrofase Ativa:** `Fase 03 - Aging de Recebiveis & Score de Cobranca`
+- **Macrofase Ativa:** `Fase 04 - Calculadoras B2B & Paridade CLT/PJ/USD-EUR`
 - **Status Geral de Governança:** `ON_TRACK`
-- **Próxima Fase Planejada:** `Fase 04 - Calculadoras B2B (NPV, IRR, Payback) & Paridade CLT/PJ/USD-EUR`
-- **Progresso Estrutural das Fases:** **4 de 9 Concluídas (44.4%)**
+- **Próxima Fase Planejada:** `Fase 05 - Conector AI/Cloud FinOps (POP_T_158)`
+- **Progresso Estrutural das Fases:** **5 de 9 Concluídas (55.6%)**
 - **Domínios Catalogados:** **6 domínios financeiros e analíticos**
 
 ```mermaid
 flowchart LR
     F01["Fases 00..01: ADRs & Fundacao<br/>CONCLUIDO"] --> F03["Fases 02..03: Razao & Aging<br/>CONCLUIDO"]
-    F03 --> F05["Fases 04..05: Calculadoras & AI FinOps<br/>PENDENTE"]
+    F03 --> F05["Fases 04..05: Calculadoras & AI FinOps<br/>EM ANDAMENTO"]
     F05 --> F07["Fases 06..07: dbt Gold & 4 Interfaces<br/>PENDENTE"]
     F07 --> F08["Fase 08: Acoplamento C.O.R.E.<br/>PENDENTE"]
 ```
@@ -38,7 +38,7 @@ flowchart LR
 | **Fase 01** | **Fundacao do Repositorio, .venv, CI/CD & Paineis Deterministicos** | `CONCLUIDO` | `2026-11-22` | - .venv Python 3.12 com requirements.txt e requirements-dev.txt 100% pinados com ==<br/>- pyproject.toml com entrypoints fcl e fcl-mcp + esqueleto src/finops_lakehouse<br/>- Workflows GitHub Actions (.github/workflows/ci.yml e pr-lint.yml)<br/>- Catalogo declarativo (domains_registry.yaml), project_progress.json, render_*.py e lint_dbt_docs.py |
 | **Fase 02** | **Gerador Sintetico Deterministico & Ingestor CSV/XLSX** | `CONCLUIDO` | `2026-11-22` | - 24 meses de razao CAPEX/OPEX (50.016 lancamentos, seed=42) em partida dobrada e DECIMAL(18,4)<br/>- Motor hibrido SQLite WAL + DuckDB Parquet ZSTD, contrato ODCS v3.1 e quarentena<br/>- Ingestor/exportador CSV/XLSX com defesa CWE-1236, magic bytes, Zip-Bomb guard e Client Path Shield |
 | **Fase 03** | **Aging de Recebiveis & Score de Cobranca** | `CONCLUIDO` | `2026-11-22` | - stg_faturas_recebiveis -> fct_receivables_aging (a_vencer, 0-30, 31-60, 61-90, 91-180, >180)<br/>- Matriz Markoviana de roll-rate, perda esperada (ECL = EAD * PD * LGD) e score de cobranca<br/>- Contrato ODCS v3.1 e testes de propriedade garantindo soma exata das faixas em Decimal |
-| **Fase 04** | **Calculadoras B2B & Paridade CLT/PJ/USD-EUR** | `PENDENTE` | `-` | - Economia B2B: NPV, IRR, Payback, margem bruta >= 65% e custo da inacao<br/>- Paridade CLT x PJ (Simples III/V + Fator R + ISS Manaus) x USD/EUR + Monte Carlo 10k |
+| **Fase 04** | **Calculadoras B2B & Paridade CLT/PJ/USD-EUR** | `CONCLUIDO` | `2026-11-22` | - Economia B2B deterministica: NPV, IRR, Payback, margem bruta >= 65% e custo da inacao<br/>- Paridade CLT x PJ (Simples III/V + Fator R + ISS Manaus) x USD/EUR + Monte Carlo 10k (int64, seed=42)<br/>- Ponte macroeconomica ../public-data-gateway (PTAX/Selic/IPCA) com snapshot offline para CI |
 | **Fase 05** | **Conector AI/Cloud FinOps (POP_T_158)** | `PENDENTE` | `-` | - Ingestor de agent_telemetry.jsonl (sintetico e schema real C.O.R.E.)<br/>- Catalogo de precos T1-T4 e simulador de economia por cache/batch/off-peak |
 | **Fase 06** | **dbt-duckdb Gold Star Schema (100% Documentado)** | `PENDENTE` | `-` | - 5 dimensoes (calendario, centro de custo, conta contabil, cliente/segmento, llm_model)<br/>- 4 fatos (capex_opex_variance, receivables_aging, b2b_deal_economics, ai_finops_consumption) |
 | **Fase 07** | **Paridade nas 4 Interfaces & Vitrine Analitica BI** | `PENDENTE` | `-` | - Paridade matematica exata entre CLI fcl, SDK FinOpsLakehouse, FastAPI /api/v1/* e MCP fcl-mcp<br/>- App Streamlit + pacote Power BI (modelo Star Schema, medidas DAX e screenshots) |
@@ -66,7 +66,8 @@ flowchart LR
 | `2026-11-22` | **Fase 00** | **Bootstrap do Repositorio & ADRs Fundacionais (PR #1)** | Criacao do repositorio publico finops-capex-revenue-lakehouse com licenca MIT, .gitignore com AI SATELLITE SHIELD e aprovacao das ADRs 001, 002 e 003. |
 | `2026-11-22` | **Fase 01** | **Fundacao Tecnica, CI/CD & Paineis Deterministicos (PR #2)** | Provisionamento do .venv Python 3.12 com dependencias pinadas (==), esqueleto finops_lakehouse (fcl/fcl-mcp), workflows ci.yml e pr-lint.yml, catalogo de 6 dominios e geradores deterministicos CATALOG.md e JORNADA_IMPLEMENTACAO.md. |
 | `2026-11-22` | **Fase 02** | **Motor Medallion, Gerador Sintetico 50k & Ingestor CSV/XLSX CWE-1236 (PR #3)** | Implementacao do nucleo decimal sem float (DECIMAL(18,4)), storage SQLite WAL + DuckDB Parquet ZSTD, contrato ODCS v3.1 com partida dobrada e quarentena, gerador sintetico deterministico de 24 meses (50.016 lancamentos, seed=42), ingestor/exportador CSV/XLSX CWE-1236 e Client Path Shield. |
-| `2026-11-22` | **Fase 03** | **Motor de Aging de Recebiveis, Roll-Rate, ECL & Score de Cobranca** | Implementacao de stg_faturas_recebiveis -> fct_receivables_aging nas 6 faixas canonicas, gerador sintetico sem PII com CNPJs 99xxxxxx Mod-11, matriz Markoviana de roll-rate, calculo deterministico de ECL e ranking de cobranca validados por testes de propriedade em Decimal. |
+| `2026-11-22` | **Fase 03** | **Motor de Aging de Recebiveis, Roll-Rate, ECL & Score de Cobranca (PR #4)** | Implementacao de stg_faturas_recebiveis -> fct_receivables_aging nas 6 faixas canonicas, gerador sintetico sem PII com CNPJs 99xxxxxx Mod-11, matriz Markoviana de roll-rate, calculo deterministico de ECL e ranking de cobranca validados por testes de propriedade em Decimal. |
+| `2026-11-22` | **Fase 04** | **Calculadoras Deterministicas B2B, Paridade CLT/PJ/FX & Monte Carlo 10k** | Implementacao de calculators/b2b_economics.py (NPV, IRR, Payback, gate de margem >= 65%, custo da inacao), calculators/career_parity.py (CLT vs PJ Anexo III/V + Fator R + ISS Manaus vs USD/EUR + Monte Carlo 10k int64 seed=42) e gateway_bridge (PTAX/Selic/IPCA com fallback offline). |
 
 ---
 

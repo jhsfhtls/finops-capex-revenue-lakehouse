@@ -2,10 +2,10 @@
   "schema_version": "1.0.0",
   "last_updated": "2026-11-22",
   "project_name": "finops-capex-revenue-lakehouse",
-  "current_macro_phase_id": "03",
-  "current_macro_phase": "Fase 03 - Aging de Recebiveis & Score de Cobranca",
+  "current_macro_phase_id": "04",
+  "current_macro_phase": "Fase 04 - Calculadoras B2B & Paridade CLT/PJ/USD-EUR",
   "overall_status": "ON_TRACK",
-  "next_phase": "Fase 04 - Calculadoras B2B (NPV, IRR, Payback) & Paridade CLT/PJ/USD-EUR",
+  "next_phase": "Fase 05 - Conector AI/Cloud FinOps (POP_T_158)",
   "structural_phases": [
     {
       "phase_id": "00",
@@ -56,11 +56,12 @@
     {
       "phase_id": "04",
       "name": "Calculadoras B2B & Paridade CLT/PJ/USD-EUR",
-      "status": "PENDING",
-      "completion_date": null,
+      "status": "COMPLETED",
+      "completion_date": "2026-11-22",
       "deliverables": [
-        "Economia B2B: NPV, IRR, Payback, margem bruta >= 65% e custo da inacao",
-        "Paridade CLT x PJ (Simples III/V + Fator R + ISS Manaus) x USD/EUR + Monte Carlo 10k"
+        "Economia B2B deterministica: NPV, IRR, Payback, margem bruta >= 65% e custo da inacao",
+        "Paridade CLT x PJ (Simples III/V + Fator R + ISS Manaus) x USD/EUR + Monte Carlo 10k (int64, seed=42)",
+        "Ponte macroeconomica ../public-data-gateway (PTAX/Selic/IPCA) com snapshot offline para CI"
       ]
     },
     {
@@ -164,8 +165,14 @@
     {
       "date": "2026-11-22",
       "phase_id": "03",
-      "milestone": "Motor de Aging de Recebiveis, Roll-Rate, ECL & Score de Cobranca",
+      "milestone": "Motor de Aging de Recebiveis, Roll-Rate, ECL & Score de Cobranca (PR #4)",
       "summary": "Implementacao de stg_faturas_recebiveis -> fct_receivables_aging nas 6 faixas canonicas, gerador sintetico sem PII com CNPJs 99xxxxxx Mod-11, matriz Markoviana de roll-rate, calculo deterministico de ECL e ranking de cobranca validados por testes de propriedade em Decimal."
+    },
+    {
+      "date": "2026-11-22",
+      "phase_id": "04",
+      "milestone": "Calculadoras Deterministicas B2B, Paridade CLT/PJ/FX & Monte Carlo 10k",
+      "summary": "Implementacao de calculators/b2b_economics.py (NPV, IRR, Payback, gate de margem >= 65%, custo da inacao), calculators/career_parity.py (CLT vs PJ Anexo III/V + Fator R + ISS Manaus vs USD/EUR + Monte Carlo 10k int64 seed=42) e gateway_bridge (PTAX/Selic/IPCA com fallback offline)."
     }
   ]
 }
