@@ -1,0 +1,104 @@
+schema_version: "1.0.0"
+updated_at: "2026-11-22"
+domains:
+  - domain_id: capex_opex_ledger
+    name: "Razao Contabil CAPEX/OPEX (Partida Dobrada)"
+    phase: "02"
+    status: CATALOGED
+    granularity: "Lancamento contabil sintetico diario (24 meses, ~50.000 linhas, seed=42)"
+    storage_layers:
+      - bronze_sqlite_wal
+      - silver_duckdb_parquet_zstd
+      - gold_dbt_mart
+    canonical_keys:
+      - id_lancamento
+      - cod_centro_custo
+      - cod_conta_contabil
+      - id_contrato_masked
+    monetary_precision: "DECIMAL(18,4)"
+    privacy_tier: SYNTHETIC_DETERMINISTIC
+    sla_freshness_hours: 24
+    description: "Controle orcamentario CAPEX vs. OPEX, variacoes orcado vs. realizado, sazonalidade e reconciliacao em partidas dobradas."
+
+  - domain_id: receivables_aging
+    name: "Aging de Recebiveis & Recuperacao de Receita"
+    phase: "03"
+    status: CATALOGED
+    granularity: "Fatura / titulo em aberto com faixas 0-30, 31-60, 61-90, 91-180 e >180 dias"
+    storage_layers:
+      - bronze_sqlite_wal
+      - silver_duckdb_parquet_zstd
+      - gold_dbt_mart
+    canonical_keys:
+      - id_fatura_masked
+      - id_contrato_masked
+      - cnpj_14
+      - sigla_uf
+    monetary_precision: "DECIMAL(18,4)"
+    privacy_tier: SYNTHETIC_DETERMINISTIC
+    sla_freshness_hours: 24
+    description: "Motor de aging de inadimplencia, matriz Markoviana de roll-rate, perda esperada (ECL) e score de priorizacao de cobranca."
+
+  - domain_id: b2b_deal_economics
+    name: "Economia de Negocios B2B (VPL, TIR, Payback & Margem)"
+    phase: "04"
+    status: CATALOGED
+    granularity: "Business case / proposta comercial B2B"
+    storage_layers:
+      - silver_duckdb_parquet_zstd
+      - gold_dbt_mart
+    canonical_keys:
+      - id_contrato_masked
+      - cod_centro_custo
+    monetary_precision: "DECIMAL(18,4)"
+    privacy_tier: CLIENT_SHIELDED_CALC
+    sla_freshness_hours: 24
+    description: "Calculos deterministicos de ROI, Payback, VPL (NPV), TIR (IRR), margem bruta (gate >= 65%) e custo da inacao."
+
+  - domain_id: career_tax_parity
+    name: "Paridade Tributaria & Remuneracao (CLT x PJ x USD/EUR)"
+    phase: "04"
+    status: CATALOGED
+    granularity: "Cenario de compensacao com simulacao Monte Carlo (10.000 cenarios, seed=42)"
+    storage_layers:
+      - silver_duckdb_parquet_zstd
+    canonical_keys:
+      - id_municipio
+      - sigla_uf
+    monetary_precision: "DECIMAL(18,4)"
+    privacy_tier: CAREER_SHIELDED_CALC
+    sla_freshness_hours: 24
+    description: "Comparador liquido CLT vs. PJ (Simples Nacional Anexos III/V + Fator R + ISS Manaus) vs. Contractor USD/EUR com PTAX/Selic/IPCA."
+
+  - domain_id: ai_cloud_finops
+    name: "AI & Cloud FinOps Telemetry (POP_T_158)"
+    phase: "05"
+    status: CATALOGED
+    granularity: "Span de execucao multi-agente (.logs/agent_telemetry.jsonl)"
+    storage_layers:
+      - bronze_sqlite_wal
+      - silver_duckdb_parquet_zstd
+      - gold_dbt_mart
+    canonical_keys:
+      - id_lancamento
+      - cod_centro_custo
+    monetary_precision: "DECIMAL(18,4)"
+    privacy_tier: INTERNAL_TELEMETRY_REDACTED
+    sla_freshness_hours: 1
+    description: "Ingestao de telemetria de LLMs (tiers T1-T4), apuracao de custo por tarefa e simulador de economia por Prompt Cache, Batch API e janela Off-Peak."
+
+  - domain_id: public_macro_bridge
+    name: "Ponte Macroeconomica Publica (PTAX, Selic, IPCA)"
+    phase: "04"
+    status: CATALOGED
+    granularity: "Serie temporal diaria/mensal sincronizada com ../public-data-gateway"
+    storage_layers:
+      - bronze_sqlite_wal
+      - silver_duckdb_parquet_zstd
+    canonical_keys:
+      - id_municipio
+      - sigla_uf
+    monetary_precision: "DECIMAL(12,6)"
+    privacy_tier: PUBLIC_NON_PERSONAL
+    sla_freshness_hours: 24
+    description: "Leitor read-only das series publicas PTAX, Selic e IPCA em ../public-data-gateway com snapshot offline de referencia (seed=42) para CI."

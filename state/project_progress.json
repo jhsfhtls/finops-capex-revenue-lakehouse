@@ -1,0 +1,157 @@
+{
+  "schema_version": "1.0.0",
+  "last_updated": "2026-11-22",
+  "project_name": "finops-capex-revenue-lakehouse",
+  "current_macro_phase_id": "01",
+  "current_macro_phase": "Fase 01 - Fundacao do Repositorio, CI/CD & Paineis Deterministicos",
+  "overall_status": "ON_TRACK",
+  "next_phase": "Fase 02 - Gerador Sintetico Deterministico (24m / ~50k lancamentos) & Ingestor CSV/XLSX CWE-1236",
+  "structural_phases": [
+    {
+      "phase_id": "00",
+      "name": "ADRs Fundacionais & Bootstrap do Repositorio",
+      "status": "COMPLETED",
+      "completion_date": "2026-11-22",
+      "deliverables": [
+        "ADR-001: Precisao decimal DECIMAL(18,4) sem float e storage hibrido Medallion",
+        "ADR-002: Chaves canonicas STRING, contratos ODCS v3.1 e quarentena",
+        "ADR-003: Isolamento LGPD/B2B (POP_T_154), Client Path Shield e defesa CWE-1236",
+        "PR #1 mergeado na main com AI SATELLITE SHIELD e licenca MIT"
+      ]
+    },
+    {
+      "phase_id": "01",
+      "name": "Fundacao do Repositorio, .venv, CI/CD & Paineis Deterministicos",
+      "status": "COMPLETED",
+      "completion_date": "2026-11-22",
+      "deliverables": [
+        ".venv Python 3.12 com requirements.txt e requirements-dev.txt 100% pinados com ==",
+        "pyproject.toml com entrypoints fcl e fcl-mcp + esqueleto src/finops_lakehouse",
+        "Workflows GitHub Actions (.github/workflows/ci.yml e pr-lint.yml)",
+        "Catalogo declarativo (domains_registry.yaml), project_progress.json, render_*.py e lint_dbt_docs.py"
+      ]
+    },
+    {
+      "phase_id": "02",
+      "name": "Gerador Sintetico Deterministico & Ingestor CSV/XLSX",
+      "status": "PENDING",
+      "completion_date": null,
+      "deliverables": [
+        "24 meses de razao CAPEX/OPEX (~50.000 lancamentos, seed=42) em partida dobrada",
+        "Ingestor CSV/XLSX com defesa CWE-1236, quarentena ODCS v3.1 e Client Path Shield"
+      ]
+    },
+    {
+      "phase_id": "03",
+      "name": "Aging de Recebiveis & Score de Cobranca",
+      "status": "PENDING",
+      "completion_date": null,
+      "deliverables": [
+        "stg_faturas_recebiveis -> fct_receivables_aging (0-30/31-60/61-90/91-180/>180)",
+        "Matriz Markoviana de roll-rate, perda esperada (ECL) e ranking de cobranca"
+      ]
+    },
+    {
+      "phase_id": "04",
+      "name": "Calculadoras B2B & Paridade CLT/PJ/USD-EUR",
+      "status": "PENDING",
+      "completion_date": null,
+      "deliverables": [
+        "Economia B2B: NPV, IRR, Payback, margem bruta >= 65% e custo da inacao",
+        "Paridade CLT x PJ (Simples III/V + Fator R + ISS Manaus) x USD/EUR + Monte Carlo 10k"
+      ]
+    },
+    {
+      "phase_id": "05",
+      "name": "Conector AI/Cloud FinOps (POP_T_158)",
+      "status": "PENDING",
+      "completion_date": null,
+      "deliverables": [
+        "Ingestor de agent_telemetry.jsonl (sintetico e schema real C.O.R.E.)",
+        "Catalogo de precos T1-T4 e simulador de economia por cache/batch/off-peak"
+      ]
+    },
+    {
+      "phase_id": "06",
+      "name": "dbt-duckdb Gold Star Schema (100% Documentado)",
+      "status": "PENDING",
+      "completion_date": null,
+      "deliverables": [
+        "5 dimensoes (calendario, centro de custo, conta contabil, cliente/segmento, llm_model)",
+        "4 fatos (capex_opex_variance, receivables_aging, b2b_deal_economics, ai_finops_consumption)"
+      ]
+    },
+    {
+      "phase_id": "07",
+      "name": "Paridade nas 4 Interfaces & Vitrine Analitica BI",
+      "status": "PENDING",
+      "completion_date": null,
+      "deliverables": [
+        "Paridade matematica exata entre CLI fcl, SDK FinOpsLakehouse, FastAPI /api/v1/* e MCP fcl-mcp",
+        "App Streamlit + pacote Power BI (modelo Star Schema, medidas DAX e screenshots)"
+      ]
+    },
+    {
+      "phase_id": "08",
+      "name": "Integracao e Acoplamento no Ecossistema C.O.R.E.",
+      "status": "PENDING",
+      "completion_date": null,
+      "deliverables": [
+        "POP oficial no core (get_next_pop_number.py + tech-sop-architect + tech-docs-formatter)",
+        "Skill inativa biz-finops-revenue-lakehouse + eval_cases.json + roteamento nos Orchestrators"
+      ]
+    }
+  ],
+  "quality_gates": [
+    {
+      "gate_id": "GATE_01",
+      "name": "Precisao Monetaria Estrita (DECIMAL 18,4)",
+      "criteria": "Zero IEEE 754 float em calculos e saidas financeiras; arredondamento ROUND_HALF_EVEN.",
+      "status": "PASSED"
+    },
+    {
+      "gate_id": "GATE_02",
+      "name": "Chaves Canonicas STRING & Contratos ODCS v3.1",
+      "criteria": "Identificadores preservados em STRING, sentinelas normalizadas e desvios enviados para quarantine/.",
+      "status": "PASSED"
+    },
+    {
+      "gate_id": "GATE_03",
+      "name": "Isolamento LGPD/B2B, Client Path Shield & CWE-1236",
+      "criteria": "Apenas dados sinteticos (seed=42) no repo publico; bloqueio de escrita real em data/; sanitizacao de planilhas.",
+      "status": "PASSED"
+    },
+    {
+      "gate_id": "GATE_04",
+      "name": "CI/CD Verde & Sincronizacao Deterministica",
+      "criteria": "ruff check ., render_catalog.py --check, render_progress.py --check e pytest -m 'not live' verdes.",
+      "status": "PASSED"
+    },
+    {
+      "gate_id": "GATE_05",
+      "name": "Cobertura dbt 100% Documentada",
+      "criteria": "dbt build e lint_dbt_docs.py com 100% dos modelos, fontes e colunas documentados.",
+      "status": "PENDING"
+    },
+    {
+      "gate_id": "GATE_06",
+      "name": "Paridade Total 4 Interfaces & Acoplamento C.O.R.E.",
+      "criteria": "Mesmos valores Decimal em CLI, SDK, FastAPI e MCP + POP/Skill integrados ao core.",
+      "status": "PENDING"
+    }
+  ],
+  "history": [
+    {
+      "date": "2026-11-22",
+      "phase_id": "00",
+      "milestone": "Bootstrap do Repositorio & ADRs Fundacionais (PR #1)",
+      "summary": "Criacao do repositorio publico finops-capex-revenue-lakehouse com licenca MIT, .gitignore com AI SATELLITE SHIELD e aprovacao das ADRs 001, 002 e 003."
+    },
+    {
+      "date": "2026-11-22",
+      "phase_id": "01",
+      "milestone": "Fundacao Tecnica, CI/CD & Paineis Deterministicos",
+      "summary": "Provisionamento do .venv Python 3.12 com dependencias pinadas (==), esqueleto finops_lakehouse (fcl/fcl-mcp), workflows ci.yml e pr-lint.yml, catalogo de 6 dominios e geradores deterministicos CATALOG.md e JORNADA_IMPLEMENTACAO.md."
+    }
+  ]
+}
