@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "finops-capex-revenue-lakehouse"
+version = "0.1.0"
+description = "Enterprise Financial Planning (CAPEX/OPEX), Delinquent Revenue Recovery (Aging & Collection Scoring), B2B Deal Economics & Cloud/AI FinOps Medallion Lakehouse."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { file = "LICENSE" }
+dependencies = [
+    "duckdb==2.0.0",
+    "fastapi==0.162.2",
+    "httpx==0.28.1",
+    "openpyxl==3.1.5",
+    "pyarrow==26.0.1",
+    "pydantic==2.14.3",
+    "python-dotenv==1.2.4",
+    "PyYAML==6.0.3",
+    "uvicorn==0.54.0",
+]
+
+[project.scripts]
+fcl = "finops_lakehouse.cli.main:main"
+fcl-mcp = "finops_lakehouse.mcp.server:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+markers = [
+    "live: executes live integration checks against external/sibling sources",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["src", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["E501"]

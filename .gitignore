@@ -19,8 +19,6 @@ htmlcov/
 
 # Medallion Lakehouse, Quarantine & Local Cache (Keep only data/reference/ versioned)
 data/*
-!data/reference/
-!data/reference/**
 *.parquet
 *.duckdb
 *.duckdb.wal
@@ -28,6 +26,9 @@ data/*
 *.sqlite-wal
 *.sqlite-shm
 *.dbc
+!data/reference/
+!data/reference/**
+!data/reference/*.parquet
 
 # dbt Artifacts & Logs
 dbt/target/
