@@ -71,3 +71,20 @@ jobs:
 
       - name: Execute deterministic offline test suite
         run: pytest -m "not live" -v
+
+      - name: Materialize synthetic Silver layer (seed=42)
+        env:
+          FCL_DATA_DIR: ${{ github.workspace }}/data
+          FCL_DUCKDB_PATH: ${{ github.workspace }}/data/gold/finops_lakehouse.duckdb
+        run: python scripts/materialize_silver.py --seed 42
+
+      - name: Build dbt-duckdb Gold Star Schema & generate docs
+        env:
+          FCL_DATA_DIR: ${{ github.workspace }}/data
+          FCL_DUCKDB_PATH: ${{ github.workspace }}/data/gold/finops_lakehouse.duckdb
+        run: |
+          dbt build --project-dir dbt --profiles-dir dbt
+          dbt docs generate --project-dir dbt --profiles-dir dbt
+
+      - name: Enforce 100% dbt documentation coverage
+        run: python scripts/lint_dbt_docs.py

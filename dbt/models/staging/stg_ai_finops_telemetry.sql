@@ -1,0 +1,27 @@
+SELECT
+    CAST(id_lancamento AS VARCHAR) AS id_lancamento,
+    CAST(timestamp_utc AS VARCHAR) AS timestamp_utc,
+    CAST(competencia AS VARCHAR) AS competencia,
+    CAST(trace_id AS VARCHAR) AS trace_id,
+    CAST(span_id AS VARCHAR) AS span_id,
+    CAST(parent_span_id AS VARCHAR) AS parent_span_id,
+    CAST(cod_centro_custo AS VARCHAR) AS cod_centro_custo,
+    CAST(repo AS VARCHAR) AS repo,
+    CAST(agent_role AS VARCHAR) AS agent_role,
+    CAST(skill AS VARCHAR) AS skill,
+    CAST(operation AS VARCHAR) AS operation,
+    CAST(model AS VARCHAR) AS model,
+    CAST(provider AS VARCHAR) AS provider,
+    CAST(tier AS VARCHAR) AS tier,
+    CAST(tokens_in AS BIGINT) AS tokens_in,
+    CAST(tokens_out AS BIGINT) AS tokens_out,
+    CAST(tokens_total AS BIGINT) AS tokens_total,
+    CAST(cached_tokens_in AS BIGINT) AS cached_tokens_in,
+    CAST(cost_usd AS DECIMAL(18, 4)) AS cost_usd,
+    CAST(cost_optimized_usd AS DECIMAL(18, 4)) AS cost_optimized_usd,
+    CAST(savings_usd AS DECIMAL(18, 4)) AS savings_usd,
+    CAST(duration_ms AS BIGINT) AS duration_ms,
+    CAST(status AS VARCHAR) AS status,
+    CAST(notes AS VARCHAR) AS notes
+FROM {{ source('ai_cloud_finops', 'ai_finops_telemetry') }}
+WHERE id_lancamento IS NOT NULL

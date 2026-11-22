@@ -9,7 +9,8 @@ from typing import Any
 
 from finops_lakehouse.core.decimal_utils import MONEY_QUANT, ZERO_MONEY
 
-_SEGMENTS: tuple[str, ...] = ("ENTERPRISE", "MID_MARKET", "SMB", "PUBLIC_UTILITY_SYN")
+CUSTOMER_SEGMENTS: tuple[str, ...] = ("ENTERPRISE", "MID_MARKET", "SMB", "PUBLIC_UTILITY_SYN")
+_SEGMENTS = CUSTOMER_SEGMENTS
 _UFS: tuple[str, ...] = ("AM", "SP", "RJ", "MG", "PR", "BA", "RS", "SC")
 _BUCKET_DAY_OFFSETS: tuple[tuple[int, int], ...] = (
     (-45, -1),   # a_vencer

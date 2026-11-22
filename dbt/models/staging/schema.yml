@@ -1,0 +1,381 @@
+version: 2
+
+models:
+  - name: stg_capex_opex_ledger
+    description: "Staging padronizado do razao contabil CAPEX/OPEX em partidas dobradas."
+    columns:
+      - name: id_lancamento
+        description: "Identificador canonico STRING do lancamento contabil."
+        tests:
+          - not_null
+          - unique
+      - name: id_lote
+        description: "Identificador do lote contabil mensal."
+        tests:
+          - not_null
+      - name: competencia
+        description: "Competencia contabil YYYY-MM."
+        tests:
+          - not_null
+      - name: data_lancamento
+        description: "Data efetiva do lancamento contabil."
+        tests:
+          - not_null
+      - name: cod_centro_custo
+        description: "Codigo STRING do centro de custo."
+        tests:
+          - not_null
+      - name: cod_conta_contabil
+        description: "Codigo hierarquico STRING do plano de contas."
+        tests:
+          - not_null
+      - name: id_contrato_masked
+        description: "Identificador mascarado/sintetico de contrato (opcional)."
+      - name: tipo_despesa
+        description: "Classificacao orcamentaria CAPEX ou OPEX."
+        tests:
+          - not_null
+      - name: moeda
+        description: "Codigo ISO-4217 da moeda."
+        tests:
+          - not_null
+      - name: valor_orcado
+        description: "Valor orcamentario previsto em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: valor_debito
+        description: "Valor contabil de debito em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: valor_credito
+        description: "Valor contabil de credito em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: descricao
+        description: "Descricao higienizada do lancamento contabil."
+
+  - name: stg_receivables_aging
+    description: "Staging padronizado de faturas e recebiveis com aging, ECL e prioridade de cobranca."
+    columns:
+      - name: id_fatura_masked
+        description: "Identificador unico mascarado da fatura."
+        tests:
+          - not_null
+          - unique
+      - name: id_contrato_masked
+        description: "Identificador mascarado do contrato B2B."
+        tests:
+          - not_null
+      - name: cnpj_14
+        description: "CNPJ sintetico canonico de 14 digitos."
+        tests:
+          - not_null
+      - name: sigla_uf
+        description: "Sigla da Unidade Federativa (2 letras)."
+        tests:
+          - not_null
+      - name: segmento_cliente
+        description: "Segmento de risco B2B."
+        tests:
+          - not_null
+      - name: competencia
+        description: "Competencia de emissao da fatura YYYY-MM."
+        tests:
+          - not_null
+      - name: data_emissao
+        description: "Data de emissao da fatura."
+        tests:
+          - not_null
+      - name: data_vencimento
+        description: "Data de vencimento contratual da fatura."
+        tests:
+          - not_null
+      - name: data_referencia
+        description: "Data de corte do snapshot de aging."
+        tests:
+          - not_null
+      - name: status_fatura
+        description: "Situacao de liquidacao da fatura."
+        tests:
+          - not_null
+      - name: moeda
+        description: "Codigo ISO-4217 da moeda."
+        tests:
+          - not_null
+      - name: dias_atraso
+        description: "Dias corridos entre vencimento e corte."
+        tests:
+          - not_null
+      - name: faixa_aging
+        description: "Faixa canonica de atraso."
+        tests:
+          - not_null
+      - name: valor_original
+        description: "Valor de face original em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: valor_pago
+        description: "Valor liquidado em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: valor_em_aberto
+        description: "Saldo devedor em aberto (EAD) em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: pd_aplicada
+        description: "Probabilidade de default em DECIMAL(12,6)."
+        tests:
+          - not_null
+      - name: lgd_aplicada
+        description: "Loss Given Default em DECIMAL(12,6)."
+        tests:
+          - not_null
+      - name: valor_ecl
+        description: "Perda esperada de credito em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: score_cobranca
+        description: "Score deterministico de prioridade de cobranca em DECIMAL(12,6)."
+        tests:
+          - not_null
+      - name: prioridade_cobranca
+        description: "Classificacao de acionamento de cobranca."
+        tests:
+          - not_null
+      - name: ranking_cobranca
+        description: "Posicao ordenada na fila de cobranca."
+        tests:
+          - not_null
+
+  - name: stg_b2b_deal_economics
+    description: "Staging padronizado das avaliacoes financeiras de negocios B2B."
+    columns:
+      - name: id_contrato_masked
+        description: "Identificador sintetico unico da proposta ou contrato B2B."
+        tests:
+          - not_null
+          - unique
+      - name: id_cliente_masked
+        description: "Identificador anonimizado do cliente B2B."
+        tests:
+          - not_null
+      - name: competencia
+        description: "Competencia de referencia YYYY-MM."
+        tests:
+          - not_null
+      - name: cod_centro_custo
+        description: "Codigo STRING do centro de custo."
+        tests:
+          - not_null
+      - name: segmento_cliente
+        description: "Segmento B2B do cliente."
+        tests:
+          - not_null
+      - name: moeda
+        description: "Moeda ISO-4217."
+        tests:
+          - not_null
+      - name: initial_investment
+        description: "Investimento inicial em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: horizon_months
+        description: "Horizonte de avaliacao em meses."
+        tests:
+          - not_null
+      - name: monthly_discount_rate
+        description: "Taxa de desconto mensal composta em DECIMAL(12,6)."
+        tests:
+          - not_null
+      - name: npv
+        description: "Valor Presente Liquido (VPL) em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: irr_monthly
+        description: "Taxa Interna de Retorno (TIR) mensal em DECIMAL(12,6)."
+      - name: irr_annualized
+        description: "Taxa Interna de Retorno (TIR) anualizada em DECIMAL(12,6)."
+      - name: payback_simple_months
+        description: "Payback simples em meses em DECIMAL(12,6)."
+      - name: payback_discounted_months
+        description: "Payback descontado em meses em DECIMAL(12,6)."
+      - name: roi_pct
+        description: "ROI percentual em DECIMAL(12,6)."
+        tests:
+          - not_null
+      - name: contract_revenue
+        description: "Receita contratual em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: direct_delivery_cost
+        description: "Custo direto de entrega em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: gross_margin_ratio
+        description: "Razao de margem bruta em DECIMAL(12,6)."
+        tests:
+          - not_null
+      - name: gross_margin_pct
+        description: "Margem bruta percentual em DECIMAL(12,6)."
+        tests:
+          - not_null
+      - name: target_gross_margin_pct
+        description: "Meta minima de margem bruta percentual em DECIMAL(12,6)."
+        tests:
+          - not_null
+      - name: margin_gate_passed
+        description: "Indicador booleano de aprovacao no portao de margem."
+        tests:
+          - not_null
+      - name: monthly_inaction_cost
+        description: "Custo mensal da inacao comercial em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: delay_months
+        description: "Meses de atraso considerados no custo da inacao."
+        tests:
+          - not_null
+      - name: cumulative_inaction_cost
+        description: "Custo acumulado da inacao em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: annualized_inaction_cost
+        description: "Custo anualizado da inacao em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: verdict
+        description: "Veredito economico (GO, REPRICE_MARGIN ou NO_GO)."
+        tests:
+          - not_null
+
+  - name: stg_ai_finops_telemetry
+    description: "Staging padronizado dos spans de telemetria multi-agente AI/Cloud FinOps."
+    columns:
+      - name: id_lancamento
+        description: "Identificador canonico do span FinOps."
+        tests:
+          - not_null
+          - unique
+      - name: timestamp_utc
+        description: "Carimbo temporal ISO-8601 UTC."
+        tests:
+          - not_null
+      - name: competencia
+        description: "Competencia contabil YYYY-MM."
+        tests:
+          - not_null
+      - name: trace_id
+        description: "Identificador da trace."
+        tests:
+          - not_null
+      - name: span_id
+        description: "Identificador do span."
+        tests:
+          - not_null
+      - name: parent_span_id
+        description: "Identificador opcional do span pai."
+      - name: cod_centro_custo
+        description: "Codigo STRING do centro de custo."
+        tests:
+          - not_null
+      - name: repo
+        description: "Repositorio de execucao."
+        tests:
+          - not_null
+      - name: agent_role
+        description: "Papel do agente (primary ou subagent)."
+        tests:
+          - not_null
+      - name: skill
+        description: "Skill acionada no span."
+        tests:
+          - not_null
+      - name: operation
+        description: "Operacao executada."
+        tests:
+          - not_null
+      - name: model
+        description: "Identificador canonico do LLM."
+        tests:
+          - not_null
+      - name: provider
+        description: "Provedor do LLM."
+        tests:
+          - not_null
+      - name: tier
+        description: "Tier canonico POP_T_158 (T1-T4)."
+        tests:
+          - not_null
+      - name: tokens_in
+        description: "Tokens de entrada consumidos."
+        tests:
+          - not_null
+      - name: tokens_out
+        description: "Tokens de saida gerados."
+        tests:
+          - not_null
+      - name: tokens_total
+        description: "Soma deterministica de tokens_in e tokens_out."
+        tests:
+          - not_null
+      - name: cached_tokens_in
+        description: "Tokens de entrada atendidos via cache."
+        tests:
+          - not_null
+      - name: cost_usd
+        description: "Custo baseline em USD em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: cost_optimized_usd
+        description: "Custo otimizado em USD em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: savings_usd
+        description: "Economia realizada em USD em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: duration_ms
+        description: "Duracao em milissegundos."
+        tests:
+          - not_null
+      - name: status
+        description: "Situacao de termino do span."
+        tests:
+          - not_null
+      - name: notes
+        description: "Observacoes operacionais higienizadas."
+
+  - name: stg_llm_model_catalog
+    description: "Staging padronizado do catalogo de modelos LLM POP_T_158 v1.4.0."
+    columns:
+      - name: model_id
+        description: "Identificador canonico unico do modelo LLM."
+        tests:
+          - not_null
+          - unique
+      - name: provider
+        description: "Provedor oficial do modelo."
+        tests:
+          - not_null
+      - name: tier
+        description: "Tier canonico POP_T_158 (T1-T4)."
+        tests:
+          - not_null
+      - name: input_usd_per_m
+        description: "Tarifa base de entrada USD/M em DECIMAL(12,6)."
+        tests:
+          - not_null
+      - name: output_usd_per_m
+        description: "Tarifa base de saida USD/M em DECIMAL(12,6)."
+        tests:
+          - not_null
+      - name: cliff_threshold_tokens
+        description: "Limiar de tokens de entrada do billing cliff."
+      - name: cliff_input_usd_per_m
+        description: "Tarifa de entrada acima do billing cliff em DECIMAL(12,6)."
+      - name: cliff_output_usd_per_m
+        description: "Tarifa de saida acima do billing cliff em DECIMAL(12,6)."
+      - name: has_billing_cliff
+        description: "Indica se o modelo possui billing cliff configurado."
+        tests:
+          - not_null

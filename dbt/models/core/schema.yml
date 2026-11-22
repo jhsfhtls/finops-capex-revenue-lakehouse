@@ -1,0 +1,561 @@
+version: 2
+
+models:
+  - name: dim_calendario_fiscal
+    description: "Dimensao de calendario fiscal mensal unificada entre todos os dominios Gold."
+    columns:
+      - name: competencia
+        description: "Chave primaria canonica STRING da competencia fiscal no formato YYYY-MM."
+        tests:
+          - not_null
+          - unique
+      - name: ano_fiscal
+        description: "Ano fiscal numerico extraido da competencia."
+        tests:
+          - not_null
+      - name: mes_fiscal
+        description: "Mes numerico do exercicio fiscal (1 a 12)."
+        tests:
+          - not_null
+      - name: trimestre_fiscal
+        description: "Trimestre fiscal numerico (1 a 4)."
+        tests:
+          - not_null
+      - name: semestre_fiscal
+        description: "Semestre fiscal numerico (1 ou 2)."
+        tests:
+          - not_null
+      - name: label_trimestre
+        description: "Rotulo consolidado de trimestre no formato YYYY-QN."
+        tests:
+          - not_null
+      - name: data_inicio_mes
+        description: "Primeiro dia do mes da competencia para ordenacao e joins temporais."
+        tests:
+          - not_null
+
+  - name: dim_centro_custo
+    description: "Dimensao corporativa e AI Platform de centros de custo canonicos."
+    columns:
+      - name: cod_centro_custo
+        description: "Chave primaria STRING do centro de custo."
+        tests:
+          - not_null
+          - unique
+      - name: dominio_origem
+        description: "Agrupamento operacional do centro de custo (FIN_CORPORATIVO ou AI_PLATFORM)."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['FIN_CORPORATIVO', 'AI_PLATFORM']
+      - name: classificacao_padrao
+        description: "Natureza orcamentaria predominante (CAPEX ou OPEX)."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['CAPEX', 'OPEX']
+      - name: nome_centro_custo
+        description: "Nome executivo descritivo do centro de custo."
+        tests:
+          - not_null
+
+  - name: dim_conta_contabil
+    description: "Dimensao hierarquica do plano de contas contabil CAPEX/OPEX."
+    columns:
+      - name: cod_conta_contabil
+        description: "Chave primaria STRING do codigo hierarquico contabil."
+        tests:
+          - not_null
+          - unique
+      - name: grupo_contabil
+        description: "Grupo estrutural do balanco ou DRE associado a conta."
+        tests:
+          - not_null
+      - name: tipo_natureza
+        description: "Classificacao contabil (CAPEX, OPEX ou CONTRAPARTIDA)."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['CAPEX', 'OPEX', 'CONTRAPARTIDA']
+      - name: descricao_conta
+        description: "Descricao gerencial da conta contabil."
+        tests:
+          - not_null
+
+  - name: dim_cliente_segmento
+    description: "Dimensao de clientes B2B sinteticos (CNPJs 99xxxxxx Mod-11), segmento e perfil LGD."
+    columns:
+      - name: cnpj_14
+        description: "Chave primaria canonica de 14 digitos do CNPJ sintetico sem PII."
+        tests:
+          - not_null
+          - unique
+      - name: segmento_cliente
+        description: "Segmento de porte/risco da carteira B2B."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['ENTERPRISE', 'MID_MARKET', 'SMB', 'PUBLIC_UTILITY_SYN']
+      - name: sigla_uf
+        description: "Unidade Federativa de domicilio do cliente sintetico."
+        tests:
+          - not_null
+      - name: lgd_padrao
+        description: "Loss Given Default (LGD) padrao do segmento em DECIMAL(12,6)."
+        tests:
+          - not_null
+      - name: perfil_risco_lgd
+        description: "Faixa qualitativa de severidade de perda (BAIXO, MEDIO ou ALTO)."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['BAIXO', 'MEDIO', 'ALTO']
+
+  - name: dim_llm_model
+    description: "Dimensao de modelos LLM POP_T_158 v1.4.0 com tarifas USD/M e billing cliffs."
+    columns:
+      - name: model_id
+        description: "Chave primaria STRING do identificador canonico do modelo LLM."
+        tests:
+          - not_null
+          - unique
+      - name: provider
+        description: "Provedor oficial do modelo (google, anthropic, openai, deepseek, etc.)."
+        tests:
+          - not_null
+      - name: tier
+        description: "Tier canonico de roteamento FinOps POP_T_158 (T1, T2, T3, T4)."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['T1', 'T2', 'T3', 'T4']
+      - name: input_usd_per_m
+        description: "Tarifa base de entrada USD por milhao de tokens em DECIMAL(12,6)."
+        tests:
+          - not_null
+      - name: output_usd_per_m
+        description: "Tarifa base de saida USD por milhao de tokens em DECIMAL(12,6)."
+        tests:
+          - not_null
+      - name: cliff_threshold_tokens
+        description: "Limiar de tokens de entrada que ativa degrau tarifario, quando aplicavel."
+      - name: cliff_input_usd_per_m
+        description: "Tarifa de entrada apos ultrapassar o billing cliff em DECIMAL(12,6)."
+      - name: cliff_output_usd_per_m
+        description: "Tarifa de saida apos ultrapassar o billing cliff em DECIMAL(12,6)."
+      - name: has_billing_cliff
+        description: "Indicador booleano de existencia de billing cliff no modelo."
+        tests:
+          - not_null
+
+  - name: fct_capex_opex_variance
+    description: "Tabela fato Gold de orcado vs. realizado e partida dobrada CAPEX/OPEX em DECIMAL(18,4)."
+    columns:
+      - name: sk_capex_opex_variance
+        description: "Chave primaria composta do fato de variacao orcamentaria."
+        tests:
+          - not_null
+          - unique
+      - name: competencia
+        description: "Chave estrangeira para dim_calendario_fiscal (YYYY-MM)."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_calendario_fiscal')
+              field: competencia
+      - name: cod_centro_custo
+        description: "Chave estrangeira para dim_centro_custo."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_centro_custo')
+              field: cod_centro_custo
+      - name: cod_conta_contabil
+        description: "Chave estrangeira para dim_conta_contabil."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_conta_contabil')
+              field: cod_conta_contabil
+      - name: tipo_despesa
+        description: "Classificacao orcamentaria (CAPEX ou OPEX)."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['CAPEX', 'OPEX']
+      - name: moeda
+        description: "Codigo ISO-4217 da moeda."
+        tests:
+          - not_null
+      - name: valor_orcado_total
+        description: "Montante orcamentario previsto consolidado em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: valor_debito_total
+        description: "Soma dos debitos contabeis em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: valor_credito_total
+        description: "Soma dos creditos contabeis de contrapartida em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: valor_realizado_total
+        description: "Montante realizado apurado para analise orcamentaria em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: variacao_orcamentaria
+        description: "Diferenca (orcado menos realizado) em DECIMAL(18,4); positivo indica economia."
+        tests:
+          - not_null
+      - name: variacao_pct
+        description: "Variacao percentual em relacao ao orcamento em DECIMAL(12,6)."
+        tests:
+          - not_null
+      - name: qtd_lancamentos
+        description: "Contagem de lancamentos contabeis no agrupamento."
+        tests:
+          - not_null
+
+  - name: fct_receivables_aging
+    description: "Tabela fato Gold de aging de recebiveis, perda esperada (ECL) e fila de cobranca."
+    columns:
+      - name: id_fatura_masked
+        description: "Chave primaria mascarada da fatura a receber."
+        tests:
+          - not_null
+          - unique
+      - name: id_contrato_masked
+        description: "Identificador mascarado do contrato B2B."
+        tests:
+          - not_null
+      - name: cnpj_14
+        description: "Chave estrangeira para dim_cliente_segmento (CNPJ sintetico 99xxxxxx)."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_cliente_segmento')
+              field: cnpj_14
+      - name: segmento_cliente
+        description: "Segmento B2B desnormalizado da dimensao de cliente."
+        tests:
+          - not_null
+      - name: sigla_uf
+        description: "Unidade Federativa do cliente."
+        tests:
+          - not_null
+      - name: perfil_risco_lgd
+        description: "Perfil qualitativo LGD herdado da dim_cliente_segmento."
+        tests:
+          - not_null
+      - name: competencia
+        description: "Chave estrangeira para dim_calendario_fiscal (YYYY-MM)."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_calendario_fiscal')
+              field: competencia
+      - name: data_emissao
+        description: "Data de emissao da fatura."
+        tests:
+          - not_null
+      - name: data_vencimento
+        description: "Data de vencimento contratual da fatura."
+        tests:
+          - not_null
+      - name: data_referencia
+        description: "Data de corte do snapshot de aging."
+        tests:
+          - not_null
+      - name: status_fatura
+        description: "Estado de liquidacao da fatura (OPEN, PARTIAL ou PAID)."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['OPEN', 'PARTIAL', 'PAID']
+      - name: moeda
+        description: "Moeda ISO-4217."
+        tests:
+          - not_null
+      - name: dias_atraso
+        description: "Dias em atraso em relacao ao corte (negativo indica titulo a vencer)."
+        tests:
+          - not_null
+      - name: faixa_aging
+        description: "Faixa canonica de aging (a_vencer, 0-30, 31-60, 61-90, 91-180, >180)."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['a_vencer', '0-30', '31-60', '61-90', '91-180', '>180']
+      - name: valor_original
+        description: "Valor original da fatura em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: valor_pago
+        description: "Valor amortizado ate a data de corte em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: valor_em_aberto
+        description: "Saldo em aberto (EAD) em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: pd_aplicada
+        description: "Probabilidade de default em DECIMAL(12,6)."
+        tests:
+          - not_null
+      - name: lgd_aplicada
+        description: "Severidade de perda (LGD) em DECIMAL(12,6)."
+        tests:
+          - not_null
+      - name: valor_ecl
+        description: "Perda esperada de credito (EAD * PD * LGD) em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: score_cobranca
+        description: "Score deterministico de cobranca (0 a 100) em DECIMAL(12,6)."
+        tests:
+          - not_null
+      - name: prioridade_cobranca
+        description: "Faixa operacional de prioridade de cobranca."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['P1_CRITICA', 'P2_ALTA', 'P3_MEDIA', 'P4_MONITORAR']
+      - name: ranking_cobranca
+        description: "Ordenacao sequencial na fila de acionamento."
+        tests:
+          - not_null
+      - name: is_vencido
+        description: "Indicador booleano de titulo vencido com saldo em aberto."
+        tests:
+          - not_null
+
+  - name: fct_b2b_deal_economics
+    description: "Tabela fato Gold de viabilidade B2B (VPL, TIR, Payback, margem e custo da inacao)."
+    columns:
+      - name: id_contrato_masked
+        description: "Chave primaria mascarada da proposta ou contrato B2B."
+        tests:
+          - not_null
+          - unique
+      - name: id_cliente_masked
+        description: "Identificador anonimo da conta comercial B2B."
+        tests:
+          - not_null
+      - name: competencia
+        description: "Chave estrangeira para dim_calendario_fiscal (YYYY-MM)."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_calendario_fiscal')
+              field: competencia
+      - name: cod_centro_custo
+        description: "Chave estrangeira para dim_centro_custo."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_centro_custo')
+              field: cod_centro_custo
+      - name: nome_centro_custo
+        description: "Nome executivo do centro de custo herdado da dimensao."
+        tests:
+          - not_null
+      - name: segmento_cliente
+        description: "Segmento B2B da oportunidade."
+        tests:
+          - not_null
+      - name: moeda
+        description: "Codigo ISO-4217 da moeda."
+        tests:
+          - not_null
+      - name: initial_investment
+        description: "Investimento inicial requerido em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: horizon_months
+        description: "Horizonte contratual em meses."
+        tests:
+          - not_null
+      - name: monthly_discount_rate
+        description: "Taxa de desconto mensal composta em DECIMAL(12,6)."
+        tests:
+          - not_null
+      - name: npv
+        description: "Valor Presente Liquido (VPL/NPV) em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: irr_monthly
+        description: "Taxa Interna de Retorno (TIR) mensal em DECIMAL(12,6)."
+      - name: irr_annualized
+        description: "Taxa Interna de Retorno (TIR) anualizada em DECIMAL(12,6)."
+      - name: payback_simple_months
+        description: "Payback simples fracionado em meses em DECIMAL(12,6)."
+      - name: payback_discounted_months
+        description: "Payback descontado fracionado em meses em DECIMAL(12,6)."
+      - name: roi_pct
+        description: "Retorno sobre o investimento percentual em DECIMAL(12,6)."
+        tests:
+          - not_null
+      - name: contract_revenue
+        description: "Receita bruta total contratada em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: direct_delivery_cost
+        description: "Custo direto de entrega em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: gross_margin_ratio
+        description: "Razao de margem bruta em DECIMAL(12,6)."
+        tests:
+          - not_null
+      - name: gross_margin_pct
+        description: "Margem bruta percentual em DECIMAL(12,6)."
+        tests:
+          - not_null
+      - name: target_gross_margin_pct
+        description: "Meta minima de margem bruta percentual em DECIMAL(12,6)."
+        tests:
+          - not_null
+      - name: margin_gate_passed
+        description: "Indica aprovacao no portao minimo de margem bruta (>= 65%)."
+        tests:
+          - not_null
+      - name: monthly_inaction_cost
+        description: "Custo mensal da postergacao de decisao em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: delay_months
+        description: "Meses de atraso simulados."
+        tests:
+          - not_null
+      - name: cumulative_inaction_cost
+        description: "Custo acumulado da inacao comercial em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: annualized_inaction_cost
+        description: "Custo anualizado da inacao em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: verdict
+        description: "Veredito economico deterministico do negocio B2B."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['GO', 'REPRICE_MARGIN', 'NO_GO']
+
+  - name: fct_ai_finops_consumption
+    description: "Tabela fato Gold de consumo de LLMs por tier T1-T4, tokens, custo baseline e economia."
+    columns:
+      - name: id_lancamento
+        description: "Chave primaria canonica do span de telemetria AI FinOps."
+        tests:
+          - not_null
+          - unique
+      - name: timestamp_utc
+        description: "Carimbo temporal ISO-8601 UTC da execucao."
+        tests:
+          - not_null
+      - name: competencia
+        description: "Chave estrangeira para dim_calendario_fiscal (YYYY-MM)."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_calendario_fiscal')
+              field: competencia
+      - name: trace_id
+        description: "Identificador hexadecimal da trace distribuida."
+        tests:
+          - not_null
+      - name: span_id
+        description: "Identificador hexadecimal do span."
+        tests:
+          - not_null
+      - name: parent_span_id
+        description: "Identificador opcional do span pai."
+      - name: cod_centro_custo
+        description: "Chave estrangeira para dim_centro_custo."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_centro_custo')
+              field: cod_centro_custo
+      - name: nome_centro_custo
+        description: "Nome executivo do centro de custo herdado da dimensao."
+        tests:
+          - not_null
+      - name: repo
+        description: "Repositorio de execucao do agente."
+        tests:
+          - not_null
+      - name: agent_role
+        description: "Papel do agente (primary ou subagent)."
+        tests:
+          - not_null
+      - name: skill
+        description: "Skill ou fluxo responsavel pelo span."
+        tests:
+          - not_null
+      - name: operation
+        description: "Operacao executada."
+        tests:
+          - not_null
+      - name: model
+        description: "Chave estrangeira para dim_llm_model (identificador canonico)."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_llm_model')
+              field: model_id
+      - name: provider
+        description: "Provedor do modelo LLM herdado da dim_llm_model."
+        tests:
+          - not_null
+      - name: tier
+        description: "Tier canonico POP_T_158 herdado da dim_llm_model."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['T1', 'T2', 'T3', 'T4']
+      - name: has_billing_cliff
+        description: "Indica se o modelo consumido possui degrau tarifario por contexto."
+        tests:
+          - not_null
+      - name: tokens_in
+        description: "Quantidade de tokens de entrada."
+        tests:
+          - not_null
+      - name: tokens_out
+        description: "Quantidade de tokens de saida."
+        tests:
+          - not_null
+      - name: tokens_total
+        description: "Soma total de tokens consumidos."
+        tests:
+          - not_null
+      - name: cached_tokens_in
+        description: "Tokens de entrada atendidos via Prompt Caching."
+        tests:
+          - not_null
+      - name: cost_usd
+        description: "Custo baseline POP_T_158 em USD em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: cost_optimized_usd
+        description: "Custo otimizado apos alavancas FinOps em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: savings_usd
+        description: "Economia em USD em DECIMAL(18,4)."
+        tests:
+          - not_null
+      - name: duration_ms
+        description: "Latencia do span em milissegundos."
+        tests:
+          - not_null
+      - name: status
+        description: "Situacao de conclusao do span (ok, error ou blocked)."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['ok', 'error', 'blocked']
+      - name: notes
+        description: "Notas operacionais higienizadas contra segredos e CWE-1236."

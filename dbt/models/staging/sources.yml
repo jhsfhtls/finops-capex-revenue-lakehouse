@@ -1,0 +1,229 @@
+version: 2
+
+sources:
+  - name: capex_opex_ledger
+    description: "Fontes Silver Parquet ZSTD do razao contabil CAPEX/OPEX em partidas dobradas."
+    meta:
+      external_location: "{{ env_var('FCL_DATA_DIR', 'data') | replace('\\\\', '/') }}/capex_opex_ledger/silver/{name}.parquet"
+    tables:
+      - name: ledger_entries
+        description: "Lancamentos contabeis sinteticos CAPEX/OPEX validados contra ODCS v3.1 (24 meses, seed=42)."
+        columns:
+          - name: id_lancamento
+            description: "Identificador canonico STRING unico do lancamento contabil."
+          - name: id_lote
+            description: "Identificador do lote mensal de fechamento para partida dobrada."
+          - name: competencia
+            description: "Competencia contabil no formato YYYY-MM."
+          - name: data_lancamento
+            description: "Data efetiva do lancamento contabil (YYYY-MM-DD)."
+          - name: cod_centro_custo
+            description: "Codigo canonico STRING do centro de custo."
+          - name: cod_conta_contabil
+            description: "Codigo hierarquico STRING do plano de contas."
+          - name: id_contrato_masked
+            description: "Identificador sintetico/mascarado do contrato vinculado (opcional)."
+          - name: tipo_despesa
+            description: "Classificacao orcamentaria do lancamento (CAPEX ou OPEX)."
+          - name: moeda
+            description: "Codigo ISO-4217 da moeda (BRL, USD ou EUR)."
+          - name: valor_orcado
+            description: "Valor orcamentario previsto em DECIMAL(18,4)."
+          - name: valor_debito
+            description: "Valor contabil de debito em DECIMAL(18,4)."
+          - name: valor_credito
+            description: "Valor contabil de credito em DECIMAL(18,4)."
+          - name: descricao
+            description: "Historico descritivo higienizado contra CWE-1236."
+
+  - name: receivables_aging
+    description: "Fontes Silver Parquet ZSTD da carteira de recebiveis, roll-rate e perda esperada (ECL)."
+    meta:
+      external_location: "{{ env_var('FCL_DATA_DIR', 'data') | replace('\\\\', '/') }}/receivables_aging/silver/{name}.parquet"
+    tables:
+      - name: fct_receivables_aging
+        description: "Titulos e faturas enriquecidos com faixa de aging, PD, LGD, ECL e ranking de cobranca."
+        columns:
+          - name: id_fatura_masked
+            description: "Identificador mascarado unico da fatura ou titulo a receber."
+          - name: id_contrato_masked
+            description: "Identificador mascarado do contrato B2B associado."
+          - name: cnpj_14
+            description: "CNPJ sintetico canonico de 14 digitos sob prefixo 99xxxxxx."
+          - name: sigla_uf
+            description: "Sigla da Unidade Federativa brasileira (2 letras maiusculas)."
+          - name: segmento_cliente
+            description: "Segmento de risco B2B (ENTERPRISE, MID_MARKET, SMB, PUBLIC_UTILITY_SYN)."
+          - name: competencia
+            description: "Competencia de emissao no formato YYYY-MM."
+          - name: data_emissao
+            description: "Data de emissao da fatura (YYYY-MM-DD)."
+          - name: data_vencimento
+            description: "Data de vencimento contratual da fatura (YYYY-MM-DD)."
+          - name: data_referencia
+            description: "Data de corte do snapshot de aging (YYYY-MM-DD)."
+          - name: status_fatura
+            description: "Situacao de liquidacao da fatura (OPEN, PARTIAL, PAID)."
+          - name: moeda
+            description: "Codigo ISO-4217 da moeda."
+          - name: dias_atraso
+            description: "Dias corridos de atraso em relacao a data_referencia."
+          - name: faixa_aging
+            description: "Faixa canonica de aging (a_vencer, 0-30, 31-60, 61-90, 91-180, >180)."
+          - name: valor_original
+            description: "Valor original de face da fatura em DECIMAL(18,4)."
+          - name: valor_pago
+            description: "Valor liquidado ate a data de referencia em DECIMAL(18,4)."
+          - name: valor_em_aberto
+            description: "Saldo devedor em aberto (EAD) em DECIMAL(18,4)."
+          - name: pd_aplicada
+            description: "Probabilidade de default (PD) aplicada em DECIMAL(12,6)."
+          - name: lgd_aplicada
+            description: "Loss Given Default (LGD) aplicada em DECIMAL(12,6)."
+          - name: valor_ecl
+            description: "Perda esperada de credito (EAD * PD * LGD) em DECIMAL(18,4)."
+          - name: score_cobranca
+            description: "Score deterministico de prioridade de cobranca (0 a 100) em DECIMAL(12,6)."
+          - name: prioridade_cobranca
+            description: "Faixa operacional de acionamento (P1_CRITICA a P4_MONITORAR)."
+          - name: ranking_cobranca
+            description: "Posicao ordenada na fila de cobranca (1 = maior prioridade)."
+
+  - name: b2b_deal_economics
+    description: "Fontes Silver Parquet ZSTD das avaliacoes economicas de propostas e contratos B2B."
+    meta:
+      external_location: "{{ env_var('FCL_DATA_DIR', 'data') | replace('\\\\', '/') }}/b2b_deal_economics/silver/{name}.parquet"
+    tables:
+      - name: b2b_deal_economics
+        description: "Business cases B2B avaliados deterministicamente via VPL, TIR, Payback e gate de margem."
+        columns:
+          - name: id_contrato_masked
+            description: "Identificador sintetico/mascarado do contrato ou proposta B2B."
+          - name: id_cliente_masked
+            description: "Identificador anonimo/sintetico da conta B2B."
+          - name: competencia
+            description: "Competencia prevista de inicio do contrato no formato YYYY-MM."
+          - name: cod_centro_custo
+            description: "Codigo canonico STRING do centro de custo executor."
+          - name: segmento_cliente
+            description: "Segmento de cliente B2B do negocio."
+          - name: moeda
+            description: "Codigo ISO-4217 da moeda do business case."
+          - name: initial_investment
+            description: "Investimento inicial (CAPEX/implantacao) em DECIMAL(18,4)."
+          - name: horizon_months
+            description: "Horizonte contratual de avaliacao em meses."
+          - name: monthly_discount_rate
+            description: "Taxa mensal composta de desconto aplicada ao VPL em DECIMAL(12,6)."
+          - name: npv
+            description: "Valor Presente Liquido (VPL/NPV) em DECIMAL(18,4)."
+          - name: irr_monthly
+            description: "Taxa Interna de Retorno (TIR) mensal em DECIMAL(12,6), nula se indefinida."
+          - name: irr_annualized
+            description: "Taxa Interna de Retorno (TIR) anualizada em DECIMAL(12,6), nula se indefinida."
+          - name: payback_simple_months
+            description: "Payback simples em meses em DECIMAL(12,6), nulo se nao recuperar."
+          - name: payback_discounted_months
+            description: "Payback descontado em meses em DECIMAL(12,6), nulo se nao recuperar."
+          - name: roi_pct
+            description: "Retorno sobre o investimento em percentual DECIMAL(12,6)."
+          - name: contract_revenue
+            description: "Receita bruta contratual prevista em DECIMAL(18,4)."
+          - name: direct_delivery_cost
+            description: "Custo direto de entrega do servico em DECIMAL(18,4)."
+          - name: gross_margin_ratio
+            description: "Razao de margem bruta entre 0 e 1 em DECIMAL(12,6)."
+          - name: gross_margin_pct
+            description: "Margem bruta percentual em DECIMAL(12,6)."
+          - name: target_gross_margin_pct
+            description: "Meta minima de margem bruta (padrao 65.000000%) em DECIMAL(12,6)."
+          - name: margin_gate_passed
+            description: "Indicador booleano de aprovacao no portao de margem minima."
+          - name: monthly_inaction_cost
+            description: "Custo mensal da inacao comercial em DECIMAL(18,4)."
+          - name: delay_months
+            description: "Meses de atraso simulados para custo da inacao."
+          - name: cumulative_inaction_cost
+            description: "Custo acumulado da inacao no periodo de atraso em DECIMAL(18,4)."
+          - name: annualized_inaction_cost
+            description: "Custo anualizado da inacao em 12 meses em DECIMAL(18,4)."
+          - name: verdict
+            description: "Veredito economico deterministico (GO, REPRICE_MARGIN ou NO_GO)."
+
+  - name: ai_cloud_finops
+    description: "Fontes Silver Parquet ZSTD de telemetria multi-agente e catalogo oficial POP_T_158 v1.4.0."
+    meta:
+      external_location: "{{ env_var('FCL_DATA_DIR', 'data') | replace('\\\\', '/') }}/ai_cloud_finops/silver/{name}.parquet"
+    tables:
+      - name: ai_finops_telemetry
+        description: "Spans de execucao LLM higienizados e precificados com tarifas POP_T_158."
+        columns:
+          - name: id_lancamento
+            description: "Identificador canonico deterministico do span de telemetria FinOps."
+          - name: timestamp_utc
+            description: "Carimbo temporal ISO-8601 UTC da execucao."
+          - name: competencia
+            description: "Competencia contabil no formato YYYY-MM."
+          - name: trace_id
+            description: "Identificador hexadecimal da trace distribuida."
+          - name: span_id
+            description: "Identificador hexadecimal do span."
+          - name: parent_span_id
+            description: "Identificador opcional do span pai."
+          - name: cod_centro_custo
+            description: "Codigo canonico STRING do centro de custo consumidor."
+          - name: repo
+            description: "Nome do repositorio executor."
+          - name: agent_role
+            description: "Papel do agente (primary ou subagent)."
+          - name: skill
+            description: "Skill ou fluxo responsavel pela chamada."
+          - name: operation
+            description: "Operacao executada higienizada."
+          - name: model
+            description: "Identificador canonico do modelo LLM."
+          - name: provider
+            description: "Provedor do modelo LLM."
+          - name: tier
+            description: "Tier canonico POP_T_158 (T1, T2, T3, T4)."
+          - name: tokens_in
+            description: "Quantidade de tokens de entrada."
+          - name: tokens_out
+            description: "Quantidade de tokens de saida."
+          - name: tokens_total
+            description: "Soma deterministica de tokens_in + tokens_out."
+          - name: cached_tokens_in
+            description: "Tokens de entrada atendidos via Prompt Caching."
+          - name: cost_usd
+            description: "Custo baseline do span em USD em DECIMAL(18,4)."
+          - name: cost_optimized_usd
+            description: "Custo otimizado apos alavancas FinOps em DECIMAL(18,4)."
+          - name: savings_usd
+            description: "Economia realizada no span em USD em DECIMAL(18,4)."
+          - name: duration_ms
+            description: "Duracao da execucao em milissegundos."
+          - name: status
+            description: "Situacao de termino do span (ok, error ou blocked)."
+          - name: notes
+            description: "Observacoes operacionais higienizadas."
+      - name: llm_model_catalog
+        description: "Catalogo de precos USD/M, tiers T1-T4 e billing cliffs de POP_T_158 v1.4.0."
+        columns:
+          - name: model_id
+            description: "Identificador canonico do modelo LLM."
+          - name: provider
+            description: "Provedor do modelo."
+          - name: tier
+            description: "Tier canonico de roteamento (T1, T2, T3, T4)."
+          - name: input_usd_per_m
+            description: "Tarifa base de entrada em USD por milhao de tokens em DECIMAL(12,6)."
+          - name: output_usd_per_m
+            description: "Tarifa base de saida em USD por milhao de tokens em DECIMAL(12,6)."
+          - name: cliff_threshold_tokens
+            description: "Limiar de tokens de entrada que dispara tarifa superior, se aplicavel."
+          - name: cliff_input_usd_per_m
+            description: "Tarifa de entrada acima do billing cliff em DECIMAL(12,6), ou nula."
+          - name: cliff_output_usd_per_m
+            description: "Tarifa de saida acima do billing cliff em DECIMAL(12,6), ou nula."
+          - name: has_billing_cliff
+            description: "Indica se o modelo possui degrau tarifario por tamanho de prompt."

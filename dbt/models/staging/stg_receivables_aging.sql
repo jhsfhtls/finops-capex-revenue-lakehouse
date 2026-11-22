@@ -1,0 +1,25 @@
+SELECT
+    CAST(id_fatura_masked AS VARCHAR) AS id_fatura_masked,
+    CAST(id_contrato_masked AS VARCHAR) AS id_contrato_masked,
+    CAST(cnpj_14 AS VARCHAR) AS cnpj_14,
+    CAST(sigla_uf AS VARCHAR) AS sigla_uf,
+    CAST(segmento_cliente AS VARCHAR) AS segmento_cliente,
+    CAST(competencia AS VARCHAR) AS competencia,
+    CAST(data_emissao AS DATE) AS data_emissao,
+    CAST(data_vencimento AS DATE) AS data_vencimento,
+    CAST(data_referencia AS DATE) AS data_referencia,
+    CAST(status_fatura AS VARCHAR) AS status_fatura,
+    CAST(moeda AS VARCHAR) AS moeda,
+    CAST(dias_atraso AS INTEGER) AS dias_atraso,
+    CAST(faixa_aging AS VARCHAR) AS faixa_aging,
+    CAST(valor_original AS DECIMAL(18, 4)) AS valor_original,
+    CAST(valor_pago AS DECIMAL(18, 4)) AS valor_pago,
+    CAST(valor_em_aberto AS DECIMAL(18, 4)) AS valor_em_aberto,
+    CAST(pd_aplicada AS DECIMAL(12, 6)) AS pd_aplicada,
+    CAST(lgd_aplicada AS DECIMAL(12, 6)) AS lgd_aplicada,
+    CAST(valor_ecl AS DECIMAL(18, 4)) AS valor_ecl,
+    CAST(score_cobranca AS DECIMAL(12, 6)) AS score_cobranca,
+    CAST(prioridade_cobranca AS VARCHAR) AS prioridade_cobranca,
+    CAST(ranking_cobranca AS INTEGER) AS ranking_cobranca
+FROM {{ source('receivables_aging', 'fct_receivables_aging') }}
+WHERE id_fatura_masked IS NOT NULL

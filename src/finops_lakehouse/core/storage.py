@@ -7,6 +7,7 @@ import json
 import os
 import re
 import sqlite3
+from collections.abc import Sequence
 from contextlib import closing
 from datetime import UTC, datetime
 from decimal import Decimal
@@ -27,6 +28,15 @@ def _json_default(obj: Any) -> str:
     if isinstance(obj, Decimal):
         return f"{obj:.4f}"
     raise TypeError(f"Object of type {type(obj).__name__} is not JSON serializable")
+
+
+def rows_to_arrow_table(rows: Sequence[dict[str, Any]], schema: pa.Schema) -> pa.Table:
+    """Convert mapping rows into a strictly typed PyArrow Table."""
+    columns = {
+        field.name: [row.get(field.name) for row in rows]
+        for field in schema
+    }
+    return pa.table(columns, schema=schema)
 
 
 class HybridStorageEngine:

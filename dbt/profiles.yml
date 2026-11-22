@@ -1,0 +1,7 @@
+finops_capex_revenue_lakehouse:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('FCL_DUCKDB_PATH', 'data/gold/finops_lakehouse.duckdb') }}"
+      threads: 4

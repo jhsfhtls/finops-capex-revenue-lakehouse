@@ -1,0 +1,151 @@
+schema_version: "3.1.0"
+contract_id: "ODCS-FINOPS-B2B-DEAL-ECONOMICS-001"
+domain: "b2b_deal_economics"
+owner: "finops-engineering"
+monetary_precision: "DECIMAL(18,4)"
+rate_precision: "DECIMAL(12,6)"
+allowed_currencies:
+  - BRL
+  - USD
+  - EUR
+allowed_verdicts:
+  - GO
+  - REPRICE_MARGIN
+  - NO_GO
+invariants:
+  positive_initial_investment: true
+  positive_contract_revenue: true
+  non_negative_direct_cost: true
+  non_negative_inaction_cost: true
+columns:
+  id_contrato_masked:
+    type: STRING
+    primary_key: true
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Identificador sintetico/mascarado unico do contrato ou proposta B2B."
+  id_cliente_masked:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Identificador sintetico/mascarado da conta cliente B2B."
+  competencia:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Competencia prevista de inicio no formato YYYY-MM."
+  cod_centro_custo:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Codigo canonico STRING do centro de custo executor."
+  segmento_cliente:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Segmento de cliente B2B."
+  moeda:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Codigo ISO-4217 da moeda."
+  initial_investment:
+    type: DECIMAL(18,4)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Investimento inicial de implantacao em DECIMAL(18,4)."
+  horizon_months:
+    type: INTEGER
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Horizonte contratual em meses."
+  monthly_discount_rate:
+    type: DECIMAL(12,6)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Taxa de desconto mensal composta em DECIMAL(12,6)."
+  npv:
+    type: DECIMAL(18,4)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Valor Presente Liquido (VPL/NPV) em DECIMAL(18,4)."
+  irr_monthly:
+    type: DECIMAL(12,6)
+    nullable: true
+    max_null_ratio: 0.5
+    description: "Taxa Interna de Retorno (TIR) mensal em DECIMAL(12,6)."
+  irr_annualized:
+    type: DECIMAL(12,6)
+    nullable: true
+    max_null_ratio: 0.5
+    description: "Taxa Interna de Retorno (TIR) anualizada em DECIMAL(12,6)."
+  payback_simple_months:
+    type: DECIMAL(12,6)
+    nullable: true
+    max_null_ratio: 0.5
+    description: "Payback simples em meses em DECIMAL(12,6)."
+  payback_discounted_months:
+    type: DECIMAL(12,6)
+    nullable: true
+    max_null_ratio: 0.5
+    description: "Payback descontado em meses em DECIMAL(12,6)."
+  roi_pct:
+    type: DECIMAL(12,6)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "ROI percentual do investimento em DECIMAL(12,6)."
+  contract_revenue:
+    type: DECIMAL(18,4)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Receita bruta total contratual em DECIMAL(18,4)."
+  direct_delivery_cost:
+    type: DECIMAL(18,4)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Custo direto de entrega em DECIMAL(18,4)."
+  gross_margin_ratio:
+    type: DECIMAL(12,6)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Razao de margem bruta entre 0 e 1 em DECIMAL(12,6)."
+  gross_margin_pct:
+    type: DECIMAL(12,6)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Margem bruta percentual em DECIMAL(12,6)."
+  target_gross_margin_pct:
+    type: DECIMAL(12,6)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Meta minima percentual de margem bruta em DECIMAL(12,6)."
+  margin_gate_passed:
+    type: BOOLEAN
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Indicador booleano de aprovacao no gate minimo de margem (>= 65%)."
+  monthly_inaction_cost:
+    type: DECIMAL(18,4)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Custo mensal da inacao em DECIMAL(18,4)."
+  delay_months:
+    type: INTEGER
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Meses de postergacao simulados."
+  cumulative_inaction_cost:
+    type: DECIMAL(18,4)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Custo acumulado da inacao no atraso em DECIMAL(18,4)."
+  annualized_inaction_cost:
+    type: DECIMAL(18,4)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Custo anualizado da inacao em 12 meses em DECIMAL(18,4)."
+  verdict:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Veredito economico deterministico (GO, REPRICE_MARGIN ou NO_GO)."
