@@ -2,10 +2,10 @@
   "schema_version": "1.0.0",
   "last_updated": "2026-11-22",
   "project_name": "finops-capex-revenue-lakehouse",
-  "current_macro_phase_id": "06",
-  "current_macro_phase": "Fase 06 - dbt-duckdb Gold Star Schema (100% Documentado)",
+  "current_macro_phase_id": "07",
+  "current_macro_phase": "Fase 07 - Paridade nas 4 Interfaces & Vitrine Analitica BI",
   "overall_status": "ON_TRACK",
-  "next_phase": "Fase 07 - Paridade nas 4 Interfaces & Vitrine Analitica BI",
+  "next_phase": "Fase 08 - Integracao e Acoplamento no Ecossistema C.O.R.E.",
   "structural_phases": [
     {
       "phase_id": "00",
@@ -89,11 +89,12 @@
     {
       "phase_id": "07",
       "name": "Paridade nas 4 Interfaces & Vitrine Analitica BI",
-      "status": "PENDING",
-      "completion_date": null,
+      "status": "COMPLETED",
+      "completion_date": "2026-11-22",
       "deliverables": [
-        "Paridade matematica exata entre CLI fcl, SDK FinOpsLakehouse, FastAPI /api/v1/* e MCP fcl-mcp",
-        "App Streamlit + pacote Power BI (modelo Star Schema, medidas DAX e screenshots)"
+        "SDK FinOpsLakehouse (SSOT Decimal) + CLI fcl (budget-variance, aging-priority, b2b-roi, career-parity, ai-finops)",
+        "FastAPI /api/v1/* (HTTP 422 para float/bool e LFI-shielded) + MCP fcl-mcp JSON-RPC 2.0 (<untrusted_data>) com paridade exata nas 4 interfaces",
+        "Bootstrap <= 60s (scripts/bootstrap_lakehouse.py) e vitrine BI (bi/streamlit_app.py + pacote Power BI .pbids/DAX/Star Schema + SVGs em bi/assets/)"
       ]
     },
     {
@@ -187,6 +188,12 @@
       "phase_id": "06",
       "milestone": "dbt-duckdb Gold Star Schema 100% Documentado (PR #7)",
       "summary": "Criacao de core/silver_bootstrap.py + scripts/materialize_silver.py, contrato ODCS b2b_deal_economics e projeto dbt/ (5 views staging, 5 dimensoes e 4 fatos em SQL ANSI portavel sem DOUBLE/FLOAT, 230 schema tests + 3 testes singulares (233 data tests) e 100% de cobertura documental via lint_dbt_docs.py no CI)."
+    },
+    {
+      "date": "2026-11-22",
+      "phase_id": "07",
+      "milestone": "Paridade Exata nas 4 Interfaces & Vitrine Analitica BI (PR #8)",
+      "summary": "Criacao do SDK FinOpsLakehouse e exposicao identica em Decimal via CLI fcl, FastAPI /api/v1/* (rejeitando float HTTP 422) e MCP fcl-mcp (<untrusted_data>), alem de bootstrap_lakehouse.py (<= 60s), app Streamlit, pacote Power BI (.pbids, DAX, Star Schema) e previews SVG deterministicos."
     }
   ]
 }

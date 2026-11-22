@@ -1,0 +1,73 @@
+/* Enterprise Power BI DAX Measures for finops-capex-revenue-lakehouse Gold Star Schema */
+
+/* ==================== CAPEX & OPEX Governance ==================== */
+Total Orcado (BRL) =
+SUM ( fct_capex_opex_variance[valor_orcado_total] )
+
+Total Realizado (BRL) =
+SUM ( fct_capex_opex_variance[valor_realizado_total] )
+
+Variacao Orcamentaria (BRL) =
+[Total Orcado (BRL)] - [Total Realizado (BRL)]
+
+Variacao Orcamentaria (%) =
+DIVIDE ( [Variacao Orcamentaria (BRL)], [Total Orcado (BRL)], 0 )
+
+Conciliacao Partida Dobrada (Delta) =
+SUM ( fct_capex_opex_variance[valor_debito_total] ) - SUM ( fct_capex_opex_variance[valor_credito_total] )
+
+/* ==================== Receivables Aging & ECL ==================== */
+Recebiveis Valor Original (BRL) =
+SUM ( fct_receivables_aging[valor_original] )
+
+Recebiveis Saldo em Aberto EAD (BRL) =
+SUM ( fct_receivables_aging[valor_em_aberto] )
+
+Recebiveis Vencidos (BRL) =
+CALCULATE (
+    SUM ( fct_receivables_aging[valor_em_aberto] ),
+    fct_receivables_aging[is_vencido] = TRUE ()
+)
+
+Perda Esperada ECL (BRL) =
+SUM ( fct_receivables_aging[valor_ecl] )
+
+Cobertura ECL (%) =
+DIVIDE ( [Perda Esperada ECL (BRL)], [Recebiveis Saldo em Aberto EAD (BRL)], 0 )
+
+/* ==================== B2B Deal Economics ==================== */
+Receita Contratual B2B (BRL) =
+SUM ( fct_b2b_deal_economics[contract_revenue] )
+
+VPL Carteira B2B (BRL) =
+SUM ( fct_b2b_deal_economics[npv] )
+
+Margem Bruta B2B (%) =
+DIVIDE (
+    SUM ( fct_b2b_deal_economics[contract_revenue] ) - SUM ( fct_b2b_deal_economics[direct_delivery_cost] ),
+    SUM ( fct_b2b_deal_economics[contract_revenue] ),
+    0
+)
+
+Taxa Aprovacao Deals GO (%) =
+DIVIDE (
+    CALCULATE ( COUNTROWS ( fct_b2b_deal_economics ), fct_b2b_deal_economics[verdict] = "GO" ),
+    COUNTROWS ( fct_b2b_deal_economics ),
+    0
+)
+
+/* ==================== AI & Cloud FinOps (POP_T_158) ==================== */
+AI FinOps Custo Baseline (USD) =
+SUM ( fct_ai_finops_consumption[cost_usd] )
+
+AI FinOps Custo Otimizado (USD) =
+SUM ( fct_ai_finops_consumption[cost_optimized_usd] )
+
+AI FinOps Economia Total (USD) =
+SUM ( fct_ai_finops_consumption[savings_usd] )
+
+AI FinOps Economia (%) =
+DIVIDE ( [AI FinOps Economia Total (USD)], [AI FinOps Custo Baseline (USD)], 0 )
+
+AI FinOps Tokens Totais =
+SUM ( fct_ai_finops_consumption[tokens_total] )

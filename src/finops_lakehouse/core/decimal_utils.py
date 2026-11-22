@@ -42,7 +42,12 @@ def _coerce_decimal(value: object, *, quant: Decimal, allow_float: bool = False)
     if not raw.is_finite():
         raise ValueError(f"Non-finite decimal value is not allowed: {value!r}")
 
-    return raw.quantize(quant, rounding=ROUND_HALF_EVEN)
+    try:
+        return raw.quantize(quant, rounding=ROUND_HALF_EVEN)
+    except InvalidOperation as exc:
+        raise ValueError(
+            f"Decimal value exceeds quantization precision limits: {value!r}"
+        ) from exc
 
 
 def require_non_negative_int(value: object, name: str) -> int:
@@ -75,4 +80,7 @@ def format_money(value: Decimal) -> str:
         raise TypeError("format_money requires a Decimal instance.")
     if not value.is_finite():
         raise ValueError("Non-finite Decimal cannot be formatted.")
-    return f"{value.quantize(MONEY_QUANT, rounding=ROUND_HALF_EVEN):.4f}"
+    try:
+        return f"{value.quantize(MONEY_QUANT, rounding=ROUND_HALF_EVEN):.4f}"
+    except InvalidOperation as exc:
+        raise ValueError(f"Decimal value exceeds money formatting precision: {value!r}") from exc

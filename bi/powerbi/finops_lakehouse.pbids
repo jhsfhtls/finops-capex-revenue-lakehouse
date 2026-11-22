@@ -1,0 +1,17 @@
+{
+  "version": "0.1",
+  "connections": [
+    {
+      "details": {
+        "protocol": "odbc",
+        "address": {
+          "connectionString": "Driver=DuckDB Driver;Database=data/gold/finops_lakehouse.duckdb;access_mode=READ_ONLY"
+        },
+        "authentication": null,
+        "query": null
+      },
+      "options": {},
+      "mode": "Import"
+    }
+  ]
+}
