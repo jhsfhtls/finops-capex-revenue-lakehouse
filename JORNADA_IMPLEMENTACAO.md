@@ -14,15 +14,15 @@ Este artefato constitui a **Fonte Única da Verdade Operacional (SSOT)** do prog
 
 ## 1. Painel de Status Executivo
 
-- **Macrofase Ativa:** `Fase 01 - Fundacao do Repositorio, CI/CD & Paineis Deterministicos`
+- **Macrofase Ativa:** `Fase 02 - Gerador Sintetico Deterministico & Ingestor CSV/XLSX`
 - **Status Geral de Governança:** `ON_TRACK`
-- **Próxima Fase Planejada:** `Fase 02 - Gerador Sintetico Deterministico (24m / ~50k lancamentos) & Ingestor CSV/XLSX CWE-1236`
-- **Progresso Estrutural das Fases:** **2 de 9 Concluídas (22.2%)**
+- **Próxima Fase Planejada:** `Fase 03 - Aging de Recebiveis & Score de Cobranca`
+- **Progresso Estrutural das Fases:** **3 de 9 Concluídas (33.3%)**
 - **Domínios Catalogados:** **6 domínios financeiros e analíticos**
 
 ```mermaid
 flowchart LR
-    F01["Fases 00..01: ADRs & Fundacao<br/>CONCLUIDO"] --> F03["Fases 02..03: Razao & Aging<br/>PENDENTE"]
+    F01["Fases 00..01: ADRs & Fundacao<br/>CONCLUIDO"] --> F03["Fases 02..03: Razao & Aging<br/>EM ANDAMENTO"]
     F03 --> F05["Fases 04..05: Calculadoras & AI FinOps<br/>PENDENTE"]
     F05 --> F07["Fases 06..07: dbt Gold & 4 Interfaces<br/>PENDENTE"]
     F07 --> F08["Fase 08: Acoplamento C.O.R.E.<br/>PENDENTE"]
@@ -36,7 +36,7 @@ flowchart LR
 | :---: | :--- | :---: | :---: | :--- |
 | **Fase 00** | **ADRs Fundacionais & Bootstrap do Repositorio** | `CONCLUIDO` | `2026-11-22` | - ADR-001: Precisao decimal DECIMAL(18,4) sem float e storage hibrido Medallion<br/>- ADR-002: Chaves canonicas STRING, contratos ODCS v3.1 e quarentena<br/>- ADR-003: Isolamento LGPD/B2B (POP_T_154), Client Path Shield e defesa CWE-1236<br/>- PR #1 mergeado na main com AI SATELLITE SHIELD e licenca MIT |
 | **Fase 01** | **Fundacao do Repositorio, .venv, CI/CD & Paineis Deterministicos** | `CONCLUIDO` | `2026-11-22` | - .venv Python 3.12 com requirements.txt e requirements-dev.txt 100% pinados com ==<br/>- pyproject.toml com entrypoints fcl e fcl-mcp + esqueleto src/finops_lakehouse<br/>- Workflows GitHub Actions (.github/workflows/ci.yml e pr-lint.yml)<br/>- Catalogo declarativo (domains_registry.yaml), project_progress.json, render_*.py e lint_dbt_docs.py |
-| **Fase 02** | **Gerador Sintetico Deterministico & Ingestor CSV/XLSX** | `PENDENTE` | `-` | - 24 meses de razao CAPEX/OPEX (~50.000 lancamentos, seed=42) em partida dobrada<br/>- Ingestor CSV/XLSX com defesa CWE-1236, quarentena ODCS v3.1 e Client Path Shield |
+| **Fase 02** | **Gerador Sintetico Deterministico & Ingestor CSV/XLSX** | `CONCLUIDO` | `2026-11-22` | - 24 meses de razao CAPEX/OPEX (50.016 lancamentos, seed=42) em partida dobrada e DECIMAL(18,4)<br/>- Motor hibrido SQLite WAL + DuckDB Parquet ZSTD, contrato ODCS v3.1 e quarentena<br/>- Ingestor/exportador CSV/XLSX com defesa CWE-1236, magic bytes, Zip-Bomb guard e Client Path Shield |
 | **Fase 03** | **Aging de Recebiveis & Score de Cobranca** | `PENDENTE` | `-` | - stg_faturas_recebiveis -> fct_receivables_aging (0-30/31-60/61-90/91-180/>180)<br/>- Matriz Markoviana de roll-rate, perda esperada (ECL) e ranking de cobranca |
 | **Fase 04** | **Calculadoras B2B & Paridade CLT/PJ/USD-EUR** | `PENDENTE` | `-` | - Economia B2B: NPV, IRR, Payback, margem bruta >= 65% e custo da inacao<br/>- Paridade CLT x PJ (Simples III/V + Fator R + ISS Manaus) x USD/EUR + Monte Carlo 10k |
 | **Fase 05** | **Conector AI/Cloud FinOps (POP_T_158)** | `PENDENTE` | `-` | - Ingestor de agent_telemetry.jsonl (sintetico e schema real C.O.R.E.)<br/>- Catalogo de precos T1-T4 e simulador de economia por cache/batch/off-peak |
@@ -64,7 +64,8 @@ flowchart LR
 | Data | Fase | Marco Realizado | Resumo Executivo |
 | :---: | :---: | :--- | :--- |
 | `2026-11-22` | **Fase 00** | **Bootstrap do Repositorio & ADRs Fundacionais (PR #1)** | Criacao do repositorio publico finops-capex-revenue-lakehouse com licenca MIT, .gitignore com AI SATELLITE SHIELD e aprovacao das ADRs 001, 002 e 003. |
-| `2026-11-22` | **Fase 01** | **Fundacao Tecnica, CI/CD & Paineis Deterministicos** | Provisionamento do .venv Python 3.12 com dependencias pinadas (==), esqueleto finops_lakehouse (fcl/fcl-mcp), workflows ci.yml e pr-lint.yml, catalogo de 6 dominios e geradores deterministicos CATALOG.md e JORNADA_IMPLEMENTACAO.md. |
+| `2026-11-22` | **Fase 01** | **Fundacao Tecnica, CI/CD & Paineis Deterministicos (PR #2)** | Provisionamento do .venv Python 3.12 com dependencias pinadas (==), esqueleto finops_lakehouse (fcl/fcl-mcp), workflows ci.yml e pr-lint.yml, catalogo de 6 dominios e geradores deterministicos CATALOG.md e JORNADA_IMPLEMENTACAO.md. |
+| `2026-11-22` | **Fase 02** | **Motor Medallion, Gerador Sintetico 50k & Ingestor CSV/XLSX CWE-1236** | Implementacao do nucleo decimal sem float (DECIMAL(18,4)), storage SQLite WAL + DuckDB Parquet ZSTD, contrato ODCS v3.1 com partida dobrada e quarentena, gerador sintetico deterministico de 24 meses (50.016 lancamentos, seed=42), ingestor/exportador CSV/XLSX CWE-1236 e Client Path Shield. |
 
 ---
 

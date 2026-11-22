@@ -1,0 +1,90 @@
+schema_version: "3.1.0"
+contract_id: "ODCS-FINOPS-CAPEX-OPEX-LEDGER-001"
+domain: "capex_opex_ledger"
+owner: "finops-engineering"
+monetary_precision: "DECIMAL(18,4)"
+allowed_currencies:
+  - BRL
+  - USD
+  - EUR
+allowed_expense_types:
+  - CAPEX
+  - OPEX
+sentinels:
+  - "99"
+  - "999"
+  - "-1"
+  - "SEM INFORMACAO"
+  - "N/A"
+  - "NA"
+  - ""
+invariants:
+  double_entry_balance: true
+  non_negative_amounts: true
+columns:
+  id_lancamento:
+    type: STRING
+    primary_key: true
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Identificador unico deterministico do lancamento contabil."
+  id_lote:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Identificador do lote de fechamento para reconciliacao de partida dobrada."
+  competencia:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Competencia contabil no formato YYYY-MM."
+  data_lancamento:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Data efetiva do lancamento no formato YYYY-MM-DD."
+  cod_centro_custo:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Codigo canonico STRING do centro de custo."
+  cod_conta_contabil:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Codigo hierarquico STRING do plano de contas."
+  id_contrato_masked:
+    type: STRING
+    nullable: true
+    max_null_ratio: 0.35
+    description: "Identificador mascarado/sintetico de contrato vinculado (nunca real)."
+  tipo_despesa:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Classificacao orcamentaria CAPEX ou OPEX."
+  moeda:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Codigo ISO-4217 da moeda (BRL, USD, EUR)."
+  valor_orcado:
+    type: DECIMAL(18,4)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Valor orcamentario previsto em DECIMAL(18,4)."
+  valor_debito:
+    type: DECIMAL(18,4)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Valor contabil de debito em DECIMAL(18,4)."
+  valor_credito:
+    type: DECIMAL(18,4)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Valor contabil de credito em DECIMAL(18,4)."
+  descricao:
+    type: STRING
+    nullable: true
+    max_null_ratio: 0.25
+    description: "Historico descritivo sintetico higienizado contra CWE-1236."
