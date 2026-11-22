@@ -1,0 +1,138 @@
+schema_version: "3.1.0"
+contract_id: "ODCS-FINOPS-RECEIVABLES-AGING-001"
+domain: "receivables_aging"
+owner: "finops-engineering"
+monetary_precision: "DECIMAL(18,4)"
+rate_precision: "DECIMAL(12,6)"
+allowed_currencies:
+  - BRL
+  - USD
+  - EUR
+allowed_statuses:
+  - OPEN
+  - PARTIAL
+  - PAID
+allowed_aging_buckets:
+  - "a_vencer"
+  - "0-30"
+  - "31-60"
+  - "61-90"
+  - "91-180"
+  - ">180"
+invariants:
+  positive_face_value: true
+  open_le_original: true
+  paid_plus_open_eq_original: true
+  exact_bucket_sum_reconciliation: true
+columns:
+  id_fatura_masked:
+    type: STRING
+    primary_key: true
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Identificador mascarado/sintetico unico da fatura ou titulo a receber."
+  id_contrato_masked:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Identificador mascarado/sintetico do contrato B2B associado."
+  cnpj_14:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "CNPJ sintetico canonico de 14 digitos com verificador Modulo 11."
+  sigla_uf:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Sigla da Unidade Federativa (2 letras maiusculas)."
+  segmento_cliente:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Segmento de risco B2B da carteira (ENTERPRISE, MID_MARKET, SMB, PUBLIC_UTILITY_SYN)."
+  competencia:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Competencia de emissao da fatura no formato YYYY-MM."
+  data_emissao:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Data de emissao da fatura (YYYY-MM-DD)."
+  data_vencimento:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Data de vencimento contratual da fatura (YYYY-MM-DD)."
+  data_referencia:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Data de corte do snapshot de aging (YYYY-MM-DD)."
+  status_fatura:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Situacao de liquidacao da fatura (OPEN, PARTIAL, PAID)."
+  moeda:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Codigo ISO-4217 da moeda (BRL, USD, EUR)."
+  dias_atraso:
+    type: INTEGER
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Dias corridos entre data_vencimento e data_referencia (negativo indica a vencer)."
+  faixa_aging:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Faixa canonica de aging (a_vencer, 0-30, 31-60, 61-90, 91-180, >180)."
+  valor_original:
+    type: DECIMAL(18,4)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Valor de face original da fatura em DECIMAL(18,4)."
+  valor_pago:
+    type: DECIMAL(18,4)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Valor amortizado/pago ate a data de referencia em DECIMAL(18,4)."
+  valor_em_aberto:
+    type: DECIMAL(18,4)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Saldo devedor em aberto (EAD) em DECIMAL(18,4)."
+  pd_aplicada:
+    type: DECIMAL(12,6)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Probabilidade de default (PD) aplicada por faixa de aging em DECIMAL(12,6)."
+  lgd_aplicada:
+    type: DECIMAL(12,6)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Loss Given Default (LGD) aplicada por segmento em DECIMAL(12,6)."
+  valor_ecl:
+    type: DECIMAL(18,4)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Perda esperada de credito (EAD * PD * LGD) em DECIMAL(18,4)."
+  score_cobranca:
+    type: DECIMAL(12,6)
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Score deterministico de prioridade de cobranca (0 a 100) em DECIMAL(12,6)."
+  prioridade_cobranca:
+    type: STRING
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Faixa operacional de acionamento (P1_CRITICA, P2_ALTA, P3_MEDIA, P4_MONITORAR)."
+  ranking_cobranca:
+    type: INTEGER
+    nullable: false
+    max_null_ratio: 0.0
+    description: "Posicao ordenada na fila de cobranca (1 = maior prioridade)."

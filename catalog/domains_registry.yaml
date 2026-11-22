@@ -23,7 +23,7 @@ domains:
   - domain_id: receivables_aging
     name: "Aging de Recebiveis & Recuperacao de Receita"
     phase: "03"
-    status: CATALOGED
+    status: HOMOLOGATED
     granularity: "Fatura / titulo em aberto com faixas 0-30, 31-60, 61-90, 91-180 e >180 dias"
     storage_layers:
       - bronze_sqlite_wal
