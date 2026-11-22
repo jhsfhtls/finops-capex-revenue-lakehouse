@@ -4,7 +4,7 @@ domains:
   - domain_id: capex_opex_ledger
     name: "Razao Contabil CAPEX/OPEX (Partida Dobrada)"
     phase: "02"
-    status: CATALOGED
+    status: HOMOLOGATED
     granularity: "Lancamento contabil sintetico diario (24 meses, ~50.000 linhas, seed=42)"
     storage_layers:
       - bronze_sqlite_wal

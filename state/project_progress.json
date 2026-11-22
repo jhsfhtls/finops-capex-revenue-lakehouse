@@ -2,10 +2,10 @@
   "schema_version": "1.0.0",
   "last_updated": "2026-11-22",
   "project_name": "finops-capex-revenue-lakehouse",
-  "current_macro_phase_id": "01",
-  "current_macro_phase": "Fase 01 - Fundacao do Repositorio, CI/CD & Paineis Deterministicos",
+  "current_macro_phase_id": "02",
+  "current_macro_phase": "Fase 02 - Gerador Sintetico Deterministico & Ingestor CSV/XLSX",
   "overall_status": "ON_TRACK",
-  "next_phase": "Fase 02 - Gerador Sintetico Deterministico (24m / ~50k lancamentos) & Ingestor CSV/XLSX CWE-1236",
+  "next_phase": "Fase 03 - Aging de Recebiveis & Score de Cobranca",
   "structural_phases": [
     {
       "phase_id": "00",
@@ -34,11 +34,12 @@
     {
       "phase_id": "02",
       "name": "Gerador Sintetico Deterministico & Ingestor CSV/XLSX",
-      "status": "PENDING",
-      "completion_date": null,
+      "status": "COMPLETED",
+      "completion_date": "2026-11-22",
       "deliverables": [
-        "24 meses de razao CAPEX/OPEX (~50.000 lancamentos, seed=42) em partida dobrada",
-        "Ingestor CSV/XLSX com defesa CWE-1236, quarentena ODCS v3.1 e Client Path Shield"
+        "24 meses de razao CAPEX/OPEX (50.016 lancamentos, seed=42) em partida dobrada e DECIMAL(18,4)",
+        "Motor hibrido SQLite WAL + DuckDB Parquet ZSTD, contrato ODCS v3.1 e quarentena",
+        "Ingestor/exportador CSV/XLSX com defesa CWE-1236, magic bytes, Zip-Bomb guard e Client Path Shield"
       ]
     },
     {
@@ -150,8 +151,14 @@
     {
       "date": "2026-11-22",
       "phase_id": "01",
-      "milestone": "Fundacao Tecnica, CI/CD & Paineis Deterministicos",
+      "milestone": "Fundacao Tecnica, CI/CD & Paineis Deterministicos (PR #2)",
       "summary": "Provisionamento do .venv Python 3.12 com dependencias pinadas (==), esqueleto finops_lakehouse (fcl/fcl-mcp), workflows ci.yml e pr-lint.yml, catalogo de 6 dominios e geradores deterministicos CATALOG.md e JORNADA_IMPLEMENTACAO.md."
+    },
+    {
+      "date": "2026-11-22",
+      "phase_id": "02",
+      "milestone": "Motor Medallion, Gerador Sintetico 50k & Ingestor CSV/XLSX CWE-1236",
+      "summary": "Implementacao do nucleo decimal sem float (DECIMAL(18,4)), storage SQLite WAL + DuckDB Parquet ZSTD, contrato ODCS v3.1 com partida dobrada e quarentena, gerador sintetico deterministico de 24 meses (50.016 lancamentos, seed=42), ingestor/exportador CSV/XLSX CWE-1236 e Client Path Shield."
     }
   ]
 }
