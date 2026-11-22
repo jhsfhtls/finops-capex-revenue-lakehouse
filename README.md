@@ -3,7 +3,7 @@
 > Enterprise Financial Planning (CAPEX/OPEX), Delinquent Revenue Recovery (Aging & Collection Scoring), B2B Deal Economics & Cloud/AI FinOps Medallion Lakehouse (Python, DuckDB, dbt, Parquet, FastAPI, Power BI).
 
 > **Synthetic Data & Privacy Notice (`ADR-003` / LGPD):**
-> This public repository runs **100% on deterministic synthetic data (`seed=42`)** and public macroeconomic reference series (`PTAX`, `Selic`, `IPCA`). It contains **zero PII**, **zero real company/client identifiers**, and **zero proprietary corporate data**. External client, career, or study workloads are isolated outside the repository via the **Client Path Shield**.
+> This public repository runs **100% on deterministic synthetic data (`seed=42`)** and public macroeconomic reference series (`PTAX`, `Selic`, `IPCA`). It contains **zero PII**, **zero real company/client identifiers**, and **zero proprietary corporate data**. External private datasets are isolated outside the repository via the **Client Path Shield**.
 
 ---
 
@@ -15,7 +15,7 @@ flowchart LR
     PDG["Public Macroeconomic Series (PTAX, Selic, IPCA)"] --> BRZ
     BRZ --> ODCS["ODCS v3.1 Contract Gate (Double-Entry, CWE-1236, Quarantine)"]
     ODCS --> SLV["Silver Layer (DuckDB + ZSTD Parquet)"]
-    SLV --> DBT["Gold dbt-duckdb Star Schema (5 Dims + 4 Facts)"]
+    SLV --> DBT["Gold dbt-duckdb Star Schema (Dimensions & Facts)"]
     DBT --> IFACE["Interfaces: SDK | CLI fcl | FastAPI /api/v1/* | MCP fcl-mcp | BI"]
 ```
 
@@ -44,7 +44,7 @@ source .venv/bin/activate  # Windows PowerShell: .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt -r requirements-dev.txt
 pip install --no-deps -e .
 
-# End-to-end bootstrap (Silver ZSTD Parquet -> dbt build 247/247 -> docs lint 100% in <= 60s)
+# End-to-end bootstrap (Silver ZSTD Parquet -> dbt build -> 100% docs lint in <= 60s)
 python scripts/bootstrap_lakehouse.py
 
 # Verify code quality, governance sync, and deterministic offline tests
@@ -115,19 +115,11 @@ Every domain calculation and Gold Star Schema query delegates to [`FinOpsLakehou
 | Path | Purpose |
 | :--- | :--- |
 | [`docs/adr/`](docs/adr/) | Architecture Decision Records (`ADR-001`–`ADR-003`) |
-| [`catalog/`](catalog/) & [`CATALOG.md`](CATALOG.md) | Domain registry (`6/6` homologated), ODCS v3.1 contracts (`4` contracts), and deterministic catalog |
-| [`state/project_progress.json`](state/project_progress.json) & [`JORNADA_IMPLEMENTACAO.md`](JORNADA_IMPLEMENTACAO.md) | Phase tracker SSOT and deterministic implementation dashboard |
-| [`src/finops_lakehouse/`](src/finops_lakehouse/) | Core storage/contracts, generators, receivables ECL, B2B/career calculators, `POP_T_158` AI FinOps, SDK, CLI `fcl`, FastAPI & MCP `fcl-mcp` |
-| [`dbt/`](dbt/) | `dbt-duckdb` Gold Star Schema (`5` staging views, `5` dims, `4` facts, `233` data tests) |
+| [`catalog/`](catalog/) & [`CATALOG.md`](CATALOG.md) | Domain registry, ODCS v3.1 contracts, and deterministic catalog |
+| [`state/project_progress.json`](state/project_progress.json) & [`JORNADA_IMPLEMENTACAO.md`](JORNADA_IMPLEMENTACAO.md) | Implementation progress tracker and milestone log |
+| [`src/finops_lakehouse/`](src/finops_lakehouse/) | Core storage/contracts, generators, receivables ECL, B2B/career calculators, AI/Cloud FinOps pricing & telemetry, SDK, CLI `fcl`, FastAPI & MCP `fcl-mcp` |
+| [`dbt/`](dbt/) | `dbt-duckdb` Gold Star Schema (staging views, conformed dimensions, fact tables, and automated data tests) |
 | [`bi/`](bi/) | Streamlit app, Power BI `.pbids` + DAX + Star Schema docs, and deterministic SVG previews |
 | [`scripts/`](scripts/) | `bootstrap_lakehouse.py`, `materialize_silver.py`, `render_bi_showcase.py`, `render_catalog.py`, `render_progress.py`, `lint_dbt_docs.py` |
 | [`tests/`](tests/) | Deterministic offline `pytest` verification suite (`test_foundation`..`test_phase07`) |
 | [`.github/workflows/`](.github/workflows/) | GitHub Actions CI (`ci.yml`) and PR governance linting (`pr-lint.yml`) |
-
----
-
-## 6. Suggested GitHub Repository Metadata
-
-- **Description:** `Enterprise Financial Planning (CAPEX/OPEX), Delinquent Revenue Recovery (Aging & Collection Scoring), B2B Deal Economics & Cloud/AI FinOps Medallion Lakehouse (Python, DuckDB, dbt, Parquet, FastAPI, Power BI).`
-- **Topics:** `finops`, `capex`, `opex`, `duckdb`, `dbt`, `medallion-architecture`, `parquet`, `fastapi`, `mcp`, `python`, `powerbi`
-- **Profile Pin:** Recommended as flagship Financial Analytics & Lakehouse Engineering portfolio repository.
