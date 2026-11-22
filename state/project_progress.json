@@ -2,10 +2,10 @@
   "schema_version": "1.0.0",
   "last_updated": "2026-11-22",
   "project_name": "finops-capex-revenue-lakehouse",
-  "current_macro_phase_id": "05",
-  "current_macro_phase": "Fase 05 - Conector AI/Cloud FinOps (POP_T_158)",
+  "current_macro_phase_id": "06",
+  "current_macro_phase": "Fase 06 - dbt-duckdb Gold Star Schema (100% Documentado)",
   "overall_status": "ON_TRACK",
-  "next_phase": "Fase 06 - dbt-duckdb Gold Star Schema (100% Documentado)",
+  "next_phase": "Fase 07 - Paridade nas 4 Interfaces & Vitrine Analitica BI",
   "structural_phases": [
     {
       "phase_id": "00",
@@ -78,11 +78,12 @@
     {
       "phase_id": "06",
       "name": "dbt-duckdb Gold Star Schema (100% Documentado)",
-      "status": "PENDING",
-      "completion_date": null,
+      "status": "COMPLETED",
+      "completion_date": "2026-11-22",
       "deliverables": [
-        "5 dimensoes (calendario, centro de custo, conta contabil, cliente/segmento, llm_model)",
-        "4 fatos (capex_opex_variance, receivables_aging, b2b_deal_economics, ai_finops_consumption)"
+        "Materializador deterministico Silver (silver_bootstrap.py + scripts/materialize_silver.py, 5 datasets ZSTD)",
+        "5 dimensoes Gold (dim_calendario_fiscal, dim_centro_custo, dim_conta_contabil, dim_cliente_segmento, dim_llm_model)",
+        "4 fatos Gold (fct_capex_opex_variance, fct_receivables_aging, fct_b2b_deal_economics, fct_ai_finops_consumption) + 14/14 modelos e 307/307 colunas documentadas (lint_dbt_docs.py APPROVED)"
       ]
     },
     {
@@ -135,7 +136,7 @@
       "gate_id": "GATE_05",
       "name": "Cobertura dbt 100% Documentada",
       "criteria": "dbt build e lint_dbt_docs.py com 100% dos modelos, fontes e colunas documentados.",
-      "status": "PENDING"
+      "status": "PASSED"
     },
     {
       "gate_id": "GATE_06",
@@ -180,6 +181,12 @@
       "phase_id": "05",
       "milestone": "Conector AI/Cloud FinOps, Catalogo POP_T_158 & Simulador de Economia (PR #6)",
       "summary": "Implementacao de finops_ai/pricing_catalog.py (44 modelos POP_T_158 v1.4.0, tiers T1-T4, billing cliffs em Decimal puro) e finops_ai/telemetry_connector.py (gerador seed=42, ingestor JSONL C.O.R.E. com quarentena e redacao de segredos, waterfall cache/batch/off-peak e Silver Parquet ZSTD sob contrato ODCS v3.1)."
+    },
+    {
+      "date": "2026-11-22",
+      "phase_id": "06",
+      "milestone": "dbt-duckdb Gold Star Schema 100% Documentado (PR #7)",
+      "summary": "Criacao de core/silver_bootstrap.py + scripts/materialize_silver.py, contrato ODCS b2b_deal_economics e projeto dbt/ (5 views staging, 5 dimensoes e 4 fatos em SQL ANSI portavel sem DOUBLE/FLOAT, 230 schema tests + 3 testes singulares (233 data tests) e 100% de cobertura documental via lint_dbt_docs.py no CI)."
     }
   ]
 }

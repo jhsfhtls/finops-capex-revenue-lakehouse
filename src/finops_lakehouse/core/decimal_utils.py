@@ -45,6 +45,15 @@ def _coerce_decimal(value: object, *, quant: Decimal, allow_float: bool = False)
     return raw.quantize(quant, rounding=ROUND_HALF_EVEN)
 
 
+def require_non_negative_int(value: object, name: str) -> int:
+    """Require a strict non-negative integer (rejecting booleans and floats)."""
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise TypeError(f"{name} must be an integer, got {type(value).__name__}.")
+    if value < 0:
+        raise ValueError(f"{name} must be non-negative, got {value}.")
+    return value
+
+
 def to_decimal_money(value: Decimal | int | str) -> Decimal:
     """Convert Decimal, int, or str to DECIMAL(18,4) with ROUND_HALF_EVEN; forbid float."""
     return _coerce_decimal(value, quant=MONEY_QUANT, allow_float=False)

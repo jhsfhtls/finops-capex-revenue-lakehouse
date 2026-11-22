@@ -25,7 +25,7 @@ DEFAULT_CONTRACT_PATH = (
     / "capex_opex_ledger.contract.yaml"
 )
 
-_COST_CENTERS: tuple[tuple[str, str], ...] = (
+CANONICAL_COST_CENTERS: tuple[tuple[str, str], ...] = (
     ("CC-0100-INFRA", "CAPEX"),
     ("CC-0200-CLOUD", "OPEX"),
     ("CC-0300-ENG", "CAPEX"),
@@ -33,6 +33,7 @@ _COST_CENTERS: tuple[tuple[str, str], ...] = (
     ("CC-0500-OPS", "OPEX"),
     ("CC-0600-COM", "OPEX"),
 )
+_COST_CENTERS = CANONICAL_COST_CENTERS
 
 _CAPEX_ACCOUNTS: tuple[str, ...] = ("1.02.01.001", "1.02.01.002", "1.02.02.001")
 _OPEX_ACCOUNTS: tuple[str, ...] = ("4.01.01.001", "4.01.01.002", "4.01.02.001", "4.01.03.001")

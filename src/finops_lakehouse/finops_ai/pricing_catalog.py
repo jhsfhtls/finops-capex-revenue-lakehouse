@@ -12,6 +12,7 @@ from finops_lakehouse.core.decimal_utils import (
     MONEY_QUANT,
     RATE_QUANT,
     ZERO_MONEY,
+    require_non_negative_int,
     to_decimal_rate,
 )
 
@@ -219,15 +220,6 @@ class SpanCostBreakdown:
     cost_optimized_usd: Decimal
     savings_usd: Decimal
     cost_usd_precise: Decimal
-
-
-def require_non_negative_int(value: object, name: str) -> int:
-    """Require a strict non-negative integer (rejecting booleans and floats)."""
-    if isinstance(value, bool) or not isinstance(value, int):
-        raise TypeError(f"{name} must be an integer, got {type(value).__name__}.")
-    if value < 0:
-        raise ValueError(f"{name} must be non-negative, got {value}.")
-    return value
 
 
 def validate_unit_rate(value: Decimal | int | str, name: str) -> Decimal:

@@ -1,0 +1,23 @@
+name: 'finops_capex_revenue_lakehouse'
+version: '1.0.0'
+config-version: 2
+
+profile: 'finops_capex_revenue_lakehouse'
+
+model-paths:
+  - "models"
+macro-paths:
+  - "macros"
+test-paths:
+  - "tests"
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  finops_capex_revenue_lakehouse:
+    staging:
+      +materialized: view
+    core:
+      +materialized: table
